@@ -216,6 +216,17 @@ func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 		})
 	}
 
+	// Check if isPicked is true for all order details
+	for _, detail := range order.OrderDetails {
+		if !detail.IsPicked {
+			log.Println("CompletePickingOrder - Order details not all picked")
+			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
+				Success: false,
+				Error:   "Not all order details are picked",
+			})
+		}
+	}
+
 	// Start transaction
 	tx := moc.DB.Begin()
 	defer func() {
