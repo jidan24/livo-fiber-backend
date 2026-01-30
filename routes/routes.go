@@ -362,6 +362,7 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, db *gorm.DB) {
 	mobileOrders := api.Group("/mobile-orders")
 	mobileOrders.Get("/my-picking-orders", mobileOrderController.GetMyPickingOrders)
 	mobileOrders.Get("/my-picking-orders/:id", mobileOrderController.GetMyPickingOrder)
+	mobileOrders.Put("/my-picking-orders/:id/picked", mobileOrderController.UpdatePickedOrder)
 	mobileOrders.Put("/my-picking-order/:id/complete", mobileOrderController.CompletePickingOrder)
 	mobileOrders.Put("/my-picking-order/:id/pending", mobileOrderController.PendingPickOrder)
 	mobileOrders.Put("/bulk-assign-picker", middleware.RoleMiddleware([]string{"developer", "superadmin", "coordinator"}), mobileOrderController.BulkAssignPicker)

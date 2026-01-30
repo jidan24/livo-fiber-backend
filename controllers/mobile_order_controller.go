@@ -32,6 +32,11 @@ type PendingPickRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type PickedOrderUpdateRequest struct {
+	SKU      string `json:"sku" validate:"required"`
+	Quantity int    `json:"quantity" validate:"required"`
+}
+
 // Unique response structs
 type MobileBulkAssignPickerResponse struct {
 	Summary        BulkAssignSummary      `json:"summary"`
@@ -716,5 +721,102 @@ func (moc *MobileOrderController) GetMobilePickedOrder(c fiber.Ctx) error {
 		Success: true,
 		Message: "Picked order retrieved successfully",
 		Data:    pickedOrder.ToOrderResponse(),
+	})
+}
+
+// UpdatePickedOrder update IsPicked status of an order detail verified by sku and quantity of detail order
+//
+// @Summary Update Picked Order Detail
+// @Description Update IsPicked status of an order detail verified by sku
+// @Tags Mobile Orders
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Order ID"
+// @Param request body PickedOrderUpdateRequest true "Picked order detail update request with SKU and Quantity"
+// @Success 200 {object} utils.SuccessResponse{data=models.OrderResponse}
+// @Failure 401 {object} utils.ErrorResponse
+// @Failure 404 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /api/mobile-orders/my-picking-orders/{id}/picked [put]
+func (moc *MobileOrderController) UpdatePickedOrder(c fiber.Ctx) error {
+	// Parse id parameter
+	id := c.Params("id")
+	var order models.Order
+	if err := moc.DB.Preload("OrderDetails").Where("id = ?", id).First(&order).Error; err != nil {
+		log.Println("UpdatePickedOrder - Order not found:", err)
+		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   "Order with id " + id + " not found.",
+		})
+	}
+
+	// Binding request body
+	var req PickedOrderUpdateRequest
+	if err := c.Bind().JSON(&req); err != nil {
+		log.Println("UpdatePickedOrder - Invalid request body:", err)
+		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   "Invalid request body",
+		})
+	}
+
+	// Check SKU, quantity, and isPicked status one by one
+	var matchedIndex int = -1
+
+	for i := range order.OrderDetails {
+		if order.OrderDetails[i].SKU == req.SKU {
+			matchedIndex = i
+			break
+		}
+	}
+
+	if matchedIndex == -1 {
+		log.Println("UpdatePickedOrder - SKU not found in order")
+		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   "SKU '" + req.SKU + "' not found in this order",
+		})
+	}
+
+	if order.OrderDetails[matchedIndex].Quantity != req.Quantity {
+		log.Printf("UpdatePickedOrder - Quantity mismatch for SKU %s (expected: %d, received: %d)", req.SKU, order.OrderDetails[matchedIndex].Quantity, req.Quantity)
+		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   fmt.Sprintf("Quantity mismatch for SKU '%s' (expected: %d, received: %d)", req.SKU, order.OrderDetails[matchedIndex].Quantity, req.Quantity),
+		})
+	}
+
+	if order.OrderDetails[matchedIndex].IsPicked {
+		log.Printf("UpdatePickedOrder - Order detail already picked (SKU: %s, IsPicked: %v)", req.SKU, order.OrderDetails[matchedIndex].IsPicked)
+		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   "Order detail with SKU '" + req.SKU + "' has already been picked",
+		})
+	}
+
+	// Update IsPicked to true by directly updating the order detail record
+	if err := moc.DB.Model(&order.OrderDetails[matchedIndex]).Update("is_picked", true).Error; err != nil {
+		log.Println("UpdatePickedOrder - Failed to update order detail:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   "Failed to update order detail",
+		})
+	}
+
+	// Reload the order with fresh data
+	if err := moc.DB.Preload("OrderDetails").Where("id = ?", id).First(&order).Error; err != nil {
+		log.Println("UpdatePickedOrder - Failed to reload order:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   "Failed to reload order",
+		})
+	}
+
+	log.Println("UpdatePickedOrder completed successfully")
+	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
+		Success: true,
+		Message: "Picked order updated successfully",
+		Data:    order.ToOrderResponse(),
 	})
 }

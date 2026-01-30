@@ -48,6 +48,7 @@ type OrderDetail struct {
 	Quantity    int    `gorm:"not null" json:"quantity"`
 	Price       int    `gorm:"not null" json:"price"`
 	IsValid     bool   `gorm:"default:false" json:"is_valid"`
+	IsPicked    bool   `gorm:"default:false" json:"is_picked"`
 
 	Order   *Order   `gorm:"foreignKey:OrderID" json:"-"`
 	Product *Product `gorm:"-" json:"product,omitempty"`
@@ -91,6 +92,7 @@ type OrderDetailResponse struct {
 	Quantity    int    `json:"quantity"`
 	Price       int    `json:"price"`
 	IsValid     bool   `json:"isValid"`
+	IsPicked    bool   `json:"isPicked"`
 
 	Product *ProductResponse `json:"product,omitempty"`
 }
@@ -106,6 +108,7 @@ func (o *Order) ToOrderResponse() *OrderResponse {
 			Quantity:    detail.Quantity,
 			Price:       detail.Price,
 			IsValid:     detail.IsValid,
+			IsPicked:    detail.IsPicked,
 		}
 
 		// Include product data if exists
