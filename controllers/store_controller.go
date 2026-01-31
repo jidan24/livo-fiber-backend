@@ -74,7 +74,7 @@ func (bc *StoreController) GetStores(c fiber.Ctx) error {
 		log.Println("GetStores - Failed to retrieve stores:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve stores",
+			Error:   "Gagal mengambil data toko",
 		})
 	}
 
@@ -132,14 +132,14 @@ func (bc *StoreController) GetStore(c fiber.Ctx) error {
 		log.Println("GetStore - Store not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Store with id " + id + " not found.",
+			Error:   "Toko dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("GetStore completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Store retrieved successfully",
+		Message: "Data toko berhasil diambil",
 		Data:    store.ToResponse(),
 	})
 }
@@ -166,7 +166,7 @@ func (bc *StoreController) CreateStore(c fiber.Ctx) error {
 		log.Println("CreateStore - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi data permintaan tidak valid",
 		})
 	}
 
@@ -178,7 +178,7 @@ func (bc *StoreController) CreateStore(c fiber.Ctx) error {
 	if err := bc.DB.Where("store_code = ?", req.StoreCode).First(&existingStore).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Store with code " + req.StoreCode + " already exists.",
+			Error:   "Toko dengan kode " + req.StoreCode + " sudah terdaftar.",
 		})
 	}
 
@@ -192,14 +192,14 @@ func (bc *StoreController) CreateStore(c fiber.Ctx) error {
 		log.Println("CreateStore - Failed to create store:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create store",
+			Error:   "Gagal membuat data toko",
 		})
 	}
 
 	log.Println("CreateStore completed successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Store created successfully",
+		Message: "Toko berhasil tambahkan",
 		Data:    newStore.ToResponse(),
 	})
 }
@@ -228,7 +228,7 @@ func (bc *StoreController) UpdateStore(c fiber.Ctx) error {
 		log.Println("UpdateStore - Store not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Store with id " + id + " not found.",
+			Error:   "Toko dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -237,7 +237,7 @@ func (bc *StoreController) UpdateStore(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -249,7 +249,7 @@ func (bc *StoreController) UpdateStore(c fiber.Ctx) error {
 	if err := bc.DB.Where("store_code = ? AND id != ?", req.StoreCode, id).First(&existingStore).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Store with code " + req.StoreCode + " already exists.",
+			Error:   "Toko dengan code " + req.StoreCode + " sudah terdaftar.",
 		})
 	}
 
@@ -261,14 +261,14 @@ func (bc *StoreController) UpdateStore(c fiber.Ctx) error {
 		log.Println("UpdateStore - Failed to update store:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update store",
+			Error:   "Gagal memperbarui data toko",
 		})
 	}
 
 	log.Println("UpdateStore completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Store updated successfully",
+		Message: "Berhasil memperbarui data toko",
 		Data:    store.ToResponse(),
 	})
 }
@@ -296,7 +296,7 @@ func (bc *StoreController) DeleteStore(c fiber.Ctx) error {
 		log.Println("DeleteStore - Store not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Store with id " + id + " not found.",
+			Error:   "Toko dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -305,13 +305,13 @@ func (bc *StoreController) DeleteStore(c fiber.Ctx) error {
 		log.Println("DeleteStore - Failed to delete store:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to delete store",
+			Error:   "Gagal menghapus data toko",
 		})
 	}
 
 	log.Println("DeleteStore completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Store deleted successfully",
+		Message: "Data toko berhasil dihapus",
 	})
 }

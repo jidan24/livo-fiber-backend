@@ -80,7 +80,7 @@ func (pc *ProductController) GetProducts(c fiber.Ctx) error {
 		log.Println("GetProducts - Failed to retrieve products:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve products",
+			Error:   "Gagal mengambil data produk",
 		})
 	}
 
@@ -139,14 +139,14 @@ func (pc *ProductController) GetProduct(c fiber.Ctx) error {
 		log.Println("GetProduct - Product not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Product with id " + id + " not found.",
+			Error:   "Produk dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("GetProduct completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Product retrieved successfully",
+		Message: "Produk berhasil diambil",
 		Data:    product.ToResponse(),
 	})
 }
@@ -173,7 +173,7 @@ func (pc *ProductController) CreateProduct(c fiber.Ctx) error {
 		log.Println("CreateProduct - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -185,7 +185,7 @@ func (pc *ProductController) CreateProduct(c fiber.Ctx) error {
 	if err := pc.DB.Where("sku = ?", req.SKU).First(&existingProduct).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Product with code " + req.SKU + " already exists.",
+			Error:   "Produk dengan kode " + req.SKU + " sudah terdaftar.",
 		})
 	}
 
@@ -202,14 +202,14 @@ func (pc *ProductController) CreateProduct(c fiber.Ctx) error {
 		log.Println("CreateProduct - Failed to create product:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create product",
+			Error:   "Gagal membuat produk",
 		})
 	}
 
 	log.Println("CreateProduct completed successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Product created successfully",
+		Message: "Produk berhasil dibuat",
 		Data:    newProduct.ToResponse(),
 	})
 }
@@ -238,7 +238,7 @@ func (pc *ProductController) UpdateProduct(c fiber.Ctx) error {
 		log.Println("UpdateProduct - Product not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Product with id " + id + " not found.",
+			Error:   "Produk dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -247,7 +247,7 @@ func (pc *ProductController) UpdateProduct(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -259,7 +259,7 @@ func (pc *ProductController) UpdateProduct(c fiber.Ctx) error {
 	if err := pc.DB.Where("sku = ? AND id != ?", req.SKU, id).First(&existingProduct).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Product with SKU " + req.SKU + " already exists.",
+			Error:   "Product dengan SKU " + req.SKU + " sudah terdaftar.",
 		})
 	}
 
@@ -274,14 +274,14 @@ func (pc *ProductController) UpdateProduct(c fiber.Ctx) error {
 		log.Println("UpdateProduct - Failed to update product:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update product",
+			Error:   "Gagal memperbarui produk",
 		})
 	}
 
 	log.Println("UpdateProduct completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Product updated successfully",
+		Message: "Produk berhasil diperbarui",
 		Data:    product.ToResponse(),
 	})
 }
@@ -309,7 +309,7 @@ func (pc *ProductController) DeleteProduct(c fiber.Ctx) error {
 		log.Println("DeleteProduct - Product not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Product with id " + id + " not found.",
+			Error:   "Product dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -318,13 +318,13 @@ func (pc *ProductController) DeleteProduct(c fiber.Ctx) error {
 		log.Println("DeleteProduct - Failed to delete product:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to delete product",
+			Error:   "Gagal menghapus produk",
 		})
 	}
 
 	log.Println("DeleteProduct completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Product deleted successfully",
+		Message: "Produk berhasil dihapus",
 	})
 }

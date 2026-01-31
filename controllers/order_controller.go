@@ -143,7 +143,7 @@ func (oc *OrderController) GetOrders(c fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid start_date format. Use YYYY-MM-DD.",
+				Error:   "Format start_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		startOfDay := time.Date(parsedStartDate.Year(), parsedStartDate.Month(), parsedStartDate.Day(), 0, 0, 0, 0, parsedStartDate.Location())
@@ -155,7 +155,7 @@ func (oc *OrderController) GetOrders(c fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid end_date format. Use YYYY-MM-DD.",
+				Error:   "Format end_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		endOfDay := time.Date(parsedEndDate.Year(), parsedEndDate.Month(), parsedEndDate.Day(), 23, 59, 59, 0, parsedEndDate.Location())
@@ -176,7 +176,7 @@ func (oc *OrderController) GetOrders(c fiber.Ctx) error {
 	if err := query.Offset(offset).Limit(limit).Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve orders",
+			Error:   "Gagal mengambil data pesanan",
 		})
 	}
 
@@ -254,7 +254,7 @@ func (oc *OrderController) GetOrder(c fiber.Ctx) error {
 	if err := oc.DB.Where("id = ?", id).Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").First(&order).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with id " + id + " not found.",
+			Error:   "Order dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -269,7 +269,7 @@ func (oc *OrderController) GetOrder(c fiber.Ctx) error {
 	log.Println("GetOrder completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order retrieved successfully",
+		Message: "Pesanan berhasil diambil",
 		Data:    order.ToOrderResponse(),
 	})
 }
@@ -296,7 +296,7 @@ func (oc *OrderController) CreateOrder(c fiber.Ctx) error {
 		log.Println("CreateOrder - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -311,7 +311,7 @@ func (oc *OrderController) CreateOrder(c fiber.Ctx) error {
 	if err := oc.DB.Where("order_ginee_id = ? OR tracking_number = ?", req.OrderGineeID, req.TrackingNumber).First(&existingOrder).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with Order Ginee ID " + req.OrderGineeID + " or Tracking Number " + req.TrackingNumber + " already exists.",
+			Error:   "Pesanan dengan order ginee id " + req.OrderGineeID + " atau nomor pelacakan " + req.TrackingNumber + " sudah terdaftar.",
 		})
 	}
 
@@ -323,13 +323,13 @@ func (oc *OrderController) CreateOrder(c fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid sentBefore format. Use YYYY-MM-DD HH:MM:SS format.",
+				Error:   "Format sentBefore tidak valid. Gunakan format YYYY-MM-DD HH:MM:SS.",
 			})
 		}
 	} else {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "sentBefore is required",
+			Error:   "Parameter senBefore wajib diisi",
 		})
 	}
 
@@ -359,7 +359,7 @@ func (oc *OrderController) CreateOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create order",
+			Error:   "Gagal membuat pesanan",
 		})
 	}
 
@@ -380,7 +380,7 @@ func (oc *OrderController) CreateOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create order details",
+			Error:   "Gagal membuat detail pesanan",
 		})
 	}
 
@@ -388,7 +388,7 @@ func (oc *OrderController) CreateOrder(c fiber.Ctx) error {
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to commit transaction",
+			Error:   "Gagal melakukan commit transaksi",
 		})
 	}
 
@@ -396,13 +396,13 @@ func (oc *OrderController) CreateOrder(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").First(&newOrder, newOrder.ID).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load order",
+			Error:   "Gagal memuat pesanan",
 		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order created successfully",
+		Message: "Pesanan berhasil dibuat",
 		Data:    newOrder.ToOrderResponse(),
 	})
 }
@@ -428,7 +428,7 @@ func (oc *OrderController) BulkCreateOrders(c fiber.Ctx) error {
 		log.Println("BulkCreateOrders - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -579,7 +579,7 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").Where("id = ?", id).First(&order).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with id " + id + " not found.",
+			Error:   "Order dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -588,7 +588,7 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -598,7 +598,7 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -606,7 +606,7 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 	if order.ProcessingStatus == "picking_progress" || order.ProcessingStatus == "qc_progress" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order cannot be modified in " + order.ProcessingStatus + " status.",
+			Error:   "Pesanan tidak dapat diubah dalam status ini " + order.ProcessingStatus + " status.",
 		})
 	}
 
@@ -614,7 +614,7 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 	if order.EventStatus == "canceled" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Canceled order cannot be modified.",
+			Error:   "Pesanan yang dibatalkan tidak dapat diubah.",
 		})
 	}
 
@@ -636,7 +636,7 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order",
+			Error:   "Gagal memperbarui pesanan",
 		})
 	}
 
@@ -647,7 +647,7 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to update order details",
+				Error:   "Gagal memperbarui detail pesanan",
 			})
 		}
 
@@ -669,7 +669,7 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 				tx.Rollback()
 				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 					Success: false,
-					Error:   "Failed to update order details",
+					Error:   "Gagal memperbarui detail pesanan",
 				})
 			}
 		}
@@ -682,7 +682,7 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order",
+			Error:   "Gagal memperbarui pesanan",
 		})
 	}
 
@@ -691,13 +691,13 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").First(&reloadedOrder, order.ID).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load order",
+			Error:   "Gagal memuat pesanan",
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order updated successfully",
+		Message: "Pesanan berhasil diperbarui",
 		Data:    reloadedOrder.ToOrderResponse(),
 	})
 }
@@ -723,7 +723,7 @@ func (oc *OrderController) DuplicateOrder(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").Where("id = ?", id).Preload("OrderDetails").First(&order).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with id " + id + " not found.",
+			Error:   "Order dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -733,7 +733,7 @@ func (oc *OrderController) DuplicateOrder(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -741,7 +741,7 @@ func (oc *OrderController) DuplicateOrder(c fiber.Ctx) error {
 	if order.ProcessingStatus == "picking_progress" || order.ProcessingStatus == "qc_progress" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order cannot be duplicated in " + order.ProcessingStatus + " status.",
+			Error:   "Pesanan tidak dapat diduplikasi dalam status ini " + order.ProcessingStatus + " status.",
 		})
 	}
 
@@ -749,7 +749,7 @@ func (oc *OrderController) DuplicateOrder(c fiber.Ctx) error {
 	if order.EventStatus == "canceled" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Canceled order cannot be duplicated.",
+			Error:   "Pesanan yang dibatlkan tidak dapat diduplikasi.",
 		})
 	}
 
@@ -757,7 +757,7 @@ func (oc *OrderController) DuplicateOrder(c fiber.Ctx) error {
 	if order.EventStatus == "duplicated" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order has already been duplicated.",
+			Error:   "Pesanan sudah pernah diduplikasi.",
 		})
 	}
 
@@ -787,7 +787,7 @@ func (oc *OrderController) DuplicateOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update original order for duplication",
+			Error:   "Gagal memperbarui pesanan asli untuk duplikasi",
 		})
 	}
 
@@ -830,7 +830,7 @@ func (oc *OrderController) DuplicateOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create duplicated order",
+			Error:   "Gagal membuat pesanan duplikasi",
 		})
 	}
 
@@ -838,7 +838,7 @@ func (oc *OrderController) DuplicateOrder(c fiber.Ctx) error {
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to commit transaction",
+			Error:   "Gagal melakukan commit transaksi",
 		})
 	}
 
@@ -848,19 +848,19 @@ func (oc *OrderController) DuplicateOrder(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").First(&reloadedOriginalOrder, order.ID).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load original order",
+			Error:   "Gagal memuat pesanan asli",
 		})
 	}
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").First(&reloadedDuplicatedOrder, duplicatedOrder.ID).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load duplicated order",
+			Error:   "Gagal memuat pesanan duplikasi",
 		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order duplicated successfully",
+		Message: "Pesanan berhasil diduplikasi",
 		Data: map[string]interface{}{
 			"originalOrder":   reloadedOriginalOrder.ToOrderResponse(),
 			"duplicatedOrder": reloadedDuplicatedOrder.ToOrderResponse(),
@@ -889,7 +889,7 @@ func (oc *OrderController) CancelOrder(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").Where("id = ?", id).First(&order).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with id " + id + " not found.",
+			Error:   "Order dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -899,7 +899,7 @@ func (oc *OrderController) CancelOrder(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -907,7 +907,7 @@ func (oc *OrderController) CancelOrder(c fiber.Ctx) error {
 	if order.ProcessingStatus == "picking_progress" || order.ProcessingStatus == "qc_progress" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order status does not allow cancellation",
+			Error:   "Status pesanan tidak memungkinkan pembatalan",
 		})
 	}
 
@@ -915,7 +915,7 @@ func (oc *OrderController) CancelOrder(c fiber.Ctx) error {
 	if order.EventStatus == "cancelled" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order is already cancelled",
+			Error:   "Pesanan sudah dibatalkan",
 		})
 	}
 
@@ -939,7 +939,7 @@ func (oc *OrderController) CancelOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to cancel order",
+			Error:   "Gagal membatalkan pesanan",
 		})
 	}
 
@@ -948,7 +948,7 @@ func (oc *OrderController) CancelOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order details",
+			Error:   "Gagal memperbarui detail pesanan",
 		})
 	}
 
@@ -956,7 +956,7 @@ func (oc *OrderController) CancelOrder(c fiber.Ctx) error {
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to commit transaction",
+			Error:   "Gagal melakukan commit transaksi",
 		})
 	}
 
@@ -965,13 +965,13 @@ func (oc *OrderController) CancelOrder(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").First(&reloadedOrder, order.ID).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load order",
+			Error:   "Gagal memuat pesanan",
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order cancelled successfully",
+		Message: "Pesanan berhasil dibatalkan",
 		Data:    reloadedOrder.ToOrderResponse(),
 	})
 }
@@ -998,7 +998,7 @@ func (oc *OrderController) AssignPicker(c fiber.Ctx) error {
 		log.Println("AssignPicker - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -1008,7 +1008,7 @@ func (oc *OrderController) AssignPicker(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -1017,7 +1017,7 @@ func (oc *OrderController) AssignPicker(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").Where("tracking_number = ?", req.TrackingNumber).First(&order).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with tracking number " + req.TrackingNumber + " not found.",
+			Error:   "Pesanan dengan nomor pelacakan " + req.TrackingNumber + " tidak ditemukan.",
 		})
 	}
 
@@ -1026,7 +1026,7 @@ func (oc *OrderController) AssignPicker(c fiber.Ctx) error {
 	if err := oc.DB.First(&picker, "id = ?", req.PickerID).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Picker with id " + strconv.FormatUint(uint64(req.PickerID), 10) + " does not exist.",
+			Error:   "Picker dengan id " + strconv.FormatUint(uint64(req.PickerID), 10) + " tidak ada.",
 		})
 	}
 
@@ -1034,7 +1034,7 @@ func (oc *OrderController) AssignPicker(c fiber.Ctx) error {
 	if order.ProcessingStatus != "ready_to_pick" && order.ProcessingStatus != "picking_pending" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order cannot be assigned a picker in " + order.ProcessingStatus + " status.",
+			Error:   "Pesanan tidak dapat diberikan picker dalam status ini" + order.ProcessingStatus + " status.",
 		})
 	}
 
@@ -1042,7 +1042,7 @@ func (oc *OrderController) AssignPicker(c fiber.Ctx) error {
 	if order.EventStatus == "canceled" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Canceled order cannot be assigned a picker.",
+			Error:   "Pesanan yang dibatalkan tidak dapat diberikan picker.",
 		})
 	}
 
@@ -1057,7 +1057,7 @@ func (oc *OrderController) AssignPicker(c fiber.Ctx) error {
 	if err := oc.DB.Save(&order).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to assign picker",
+			Error:   "Gagal memberikan picker pada pesanan",
 		})
 	}
 
@@ -1066,13 +1066,13 @@ func (oc *OrderController) AssignPicker(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").First(&reloadedOrder, order.ID).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load order",
+			Error:   "Gagal memuat pesanan",
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Picker assigned successfully",
+		Message: "Picker berhasil ditugaskan pada pesanan",
 		Data:    reloadedOrder.ToOrderResponse(),
 	})
 }
@@ -1098,7 +1098,7 @@ func (oc *OrderController) PendingPickingOrders(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").Where("id = ?", id).First(&order).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with id " + id + " not found.",
+			Error:   "Order dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -1108,7 +1108,7 @@ func (oc *OrderController) PendingPickingOrders(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -1116,7 +1116,7 @@ func (oc *OrderController) PendingPickingOrders(c fiber.Ctx) error {
 	if order.ProcessingStatus != "picking_progress" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order cannot be marked as pending in " + order.ProcessingStatus + " status.",
+			Error:   "Pesanan tidak dapat ditandai sebagai pending dalam status ini " + order.ProcessingStatus + " status.",
 		})
 	}
 
@@ -1133,7 +1133,7 @@ func (oc *OrderController) PendingPickingOrders(c fiber.Ctx) error {
 	if err := oc.DB.Select("ProcessingStatus", "PendingBy", "PendingAt", "PickedBy", "AssignedBy", "AssignedAt").Save(&order).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to mark order as pending",
+			Error:   "Gagal menandai pesanan sebagai pending",
 		})
 	}
 
@@ -1142,13 +1142,13 @@ func (oc *OrderController) PendingPickingOrders(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").First(&reloadedOrder, order.ID).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load order",
+			Error:   "Gagal memuat pesanan",
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order marked as pending picking successfully",
+		Message: "Pesanan berhasil ditandai sebagai pending picking",
 		Data:    reloadedOrder.ToOrderResponse(),
 	})
 }
@@ -1191,7 +1191,7 @@ func (oc *OrderController) GetAssignedOrders(c fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid start_date format. Use YYYY-MM-DD.",
+				Error:   "Format start_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		startOfDay := time.Date(parsedStartDate.Year(), parsedStartDate.Month(), parsedStartDate.Day(), 0, 0, 0, 0, parsedStartDate.Location())
@@ -1203,7 +1203,7 @@ func (oc *OrderController) GetAssignedOrders(c fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid end_date format. Use YYYY-MM-DD.",
+				Error:   "Format end_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		endOfDay := time.Date(parsedEndDate.Year(), parsedEndDate.Month(), parsedEndDate.Day(), 23, 59, 59, 0, parsedEndDate.Location())
@@ -1224,7 +1224,7 @@ func (oc *OrderController) GetAssignedOrders(c fiber.Ctx) error {
 	if err := query.Offset(offset).Limit(limit).Find(&orders).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve orders",
+			Error:   "Gagal mengambil data pesanan",
 		})
 	}
 
@@ -1293,7 +1293,7 @@ func (oc *OrderController) QCProcessStatusUpdate(c fiber.Ctx) error {
 		log.Println("QCProcessStatusUpdate - Order not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with id " + id + " not found.",
+			Error:   "Order dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -1302,7 +1302,7 @@ func (oc *OrderController) QCProcessStatusUpdate(c fiber.Ctx) error {
 		log.Println("QCProcessStatusUpdate - Order is already in qc process status.")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order is already in qc process status.",
+			Error:   "Pesanan sudah berada dalam status proses qc.",
 		})
 	}
 
@@ -1311,7 +1311,7 @@ func (oc *OrderController) QCProcessStatusUpdate(c fiber.Ctx) error {
 		log.Println("QCProcessStatusUpdate - Canceled order cannot be updated to qc process status.")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Canceled order cannot be updated to qc process status.",
+			Error:   "Pesanan yang dibatalkan tidak dapat diperbarui ke status proses qc.",
 		})
 	}
 
@@ -1322,7 +1322,7 @@ func (oc *OrderController) QCProcessStatusUpdate(c fiber.Ctx) error {
 		log.Println("QCProcessStatusUpdate - Failed to update order processing status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order processing status",
+			Error:   "Gagal memperbarui status pemrosesan pesanan",
 		})
 	}
 
@@ -1332,14 +1332,14 @@ func (oc *OrderController) QCProcessStatusUpdate(c fiber.Ctx) error {
 		log.Println("QCProcessStatusUpdate - Failed to load order:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load order",
+			Error:   "Gagal memuat pesanan",
 		})
 	}
 
 	log.Println("QCProcessStatusUpdate completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order processing status updated to qc process successfully",
+		Message: "Status pemrosesan pesanan berhasil diperbarui ke proses qc",
 		Data:    reloadedOrder.ToOrderResponse(),
 	})
 }
@@ -1367,7 +1367,7 @@ func (oc *OrderController) PickingCompletedStatusUpdate(c fiber.Ctx) error {
 		log.Println("PickingCompletedStatusUpdate - Order not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with id " + id + " not found.",
+			Error:   "Order dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -1376,7 +1376,7 @@ func (oc *OrderController) PickingCompletedStatusUpdate(c fiber.Ctx) error {
 		log.Println("PickingCompletedStatusUpdate - Order is already in picking completed status.")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order is already in picking completed status.",
+			Error:   "Pesanan sudah berada dalam status picking completed.",
 		})
 	}
 
@@ -1385,7 +1385,7 @@ func (oc *OrderController) PickingCompletedStatusUpdate(c fiber.Ctx) error {
 		log.Println("PickingCompletedStatusUpdate - Canceled order cannot be updated to picking completed status.")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Canceled order cannot be updated to picking completed status.",
+			Error:   "Pesanan yang dibatalkan tidak dapat diperbarui ke status picking completed.",
 		})
 	}
 
@@ -1395,7 +1395,7 @@ func (oc *OrderController) PickingCompletedStatusUpdate(c fiber.Ctx) error {
 		log.Println("PickingCompletedStatusUpdate - Failed to update order processing status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order processing status",
+			Error:   "Gagal memperbarui status pemrosesan pesanan",
 		})
 	}
 
@@ -1405,14 +1405,14 @@ func (oc *OrderController) PickingCompletedStatusUpdate(c fiber.Ctx) error {
 		log.Println("PickingCompletedStatusUpdate - Failed to load order:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load order",
+			Error:   "Gagal memuat pesanan",
 		})
 	}
 
 	log.Println("PickingCompletedStatusUpdate completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order processing status updated to picking completed successfully",
+		Message: "Status pemrosesan pesanan berhasil diperbarui ke picking completed",
 		Data:    reloadedOrder.ToOrderResponse(),
 	})
 }

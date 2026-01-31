@@ -85,7 +85,7 @@ func (qcrc *QCRibbonController) GetQCRibbons(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -109,7 +109,7 @@ func (qcrc *QCRibbonController) GetQCRibbons(c fiber.Ctx) error {
 	if err := query.Limit(limit).Offset(offset).Find(&qcRibbons).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve QC Ribbons",
+			Error:   "Gagal mengambil data QC Ribbons",
 		})
 	}
 
@@ -176,7 +176,7 @@ func (qcrc *QCRibbonController) GetQCRibbon(c fiber.Ctx) error {
 		log.Println("GetQCRibbon - QC Ribbon not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Ribbon with id " + id + " not found.",
+			Error:   "QC Ribbon dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -189,7 +189,7 @@ func (qcrc *QCRibbonController) GetQCRibbon(c fiber.Ctx) error {
 	log.Println("GetQCRibbon completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "QC Ribbon retrieved successfully",
+		Message: "QC Ribbon berhasil diambil",
 		Data:    qcRibbon.ToResponse(),
 	})
 }
@@ -225,7 +225,7 @@ func (qcrc *QCRibbonController) GetChartQCRibbons(c fiber.Ctx) error {
 	if err := qcrc.DB.Model(&models.QCRibbon{}).Select("DATE(created_at) as date, COUNT(*) as count").Where("created_at >= ? AND created_at < ?", startOfMonth, startOfNextMonth).Group("DATE(created_at)").Order("date ASC").Scan(&dailyCounts).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve QC Ribbon data",
+			Error:   "Gagal mengambil data QC Ribbon",
 		})
 	}
 
@@ -234,7 +234,7 @@ func (qcrc *QCRibbonController) GetChartQCRibbons(c fiber.Ctx) error {
 	if err := qcrc.DB.Model(&models.QCRibbon{}).Where("created_at >= ? AND created_at < ?", startOfMonth, startOfNextMonth).Count(&totalCount).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve total QC Ribbon count",
+			Error:   "Gagal mengambil total jumlah QC Ribbon",
 		})
 	}
 
@@ -279,7 +279,7 @@ func (qcrc *QCRibbonController) QCRibbonStart(c fiber.Ctx) error {
 		log.Println("QCRibbonStart - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -289,7 +289,7 @@ func (qcrc *QCRibbonController) QCRibbonStart(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -302,7 +302,7 @@ func (qcrc *QCRibbonController) QCRibbonStart(c fiber.Ctx) error {
 		log.Println("QCRibbonStart - Tracking number already in QC Ribbon records:", req.TrackingNumber)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Tracking number " + req.TrackingNumber + " is already in QC Ribbon records.",
+			Error:   "Nomor pelacak " + req.TrackingNumber + " sudah ada dalam data QC Ribbon.",
 		})
 	}
 
@@ -312,7 +312,7 @@ func (qcrc *QCRibbonController) QCRibbonStart(c fiber.Ctx) error {
 		log.Println("QCRibbonStart - No order found with tracking number in picking completed status:", req.TrackingNumber)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "No order found with tracking number " + req.TrackingNumber + " in picking completed status.",
+			Error:   "Tidak ditemukan pesanan dengan nomor pelacak " + req.TrackingNumber + " dalam status picking completed.",
 		})
 	}
 
@@ -337,7 +337,7 @@ func (qcrc *QCRibbonController) QCRibbonStart(c fiber.Ctx) error {
 		log.Println("QCRibbonStart - Failed to create QC Ribbon record:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to start QC Ribbon processing",
+			Error:   "Gagal memulai proses QC Ribbon",
 		})
 	}
 
@@ -347,7 +347,7 @@ func (qcrc *QCRibbonController) QCRibbonStart(c fiber.Ctx) error {
 		log.Println("QCRibbonStart - Failed to update order processing status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to start QC Ribbon processing",
+			Error:   "Gagal memulai proses QC Ribbon",
 		})
 	}
 
@@ -356,14 +356,14 @@ func (qcrc *QCRibbonController) QCRibbonStart(c fiber.Ctx) error {
 		log.Println("QCRibbonStart - Failed to commit transaction:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to start QC Ribbon processing",
+			Error:   "Gagal memulai proses QC Ribbon",
 		})
 	}
 
 	log.Println("QCRibbonStart completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "QC Ribbon processing started successfully",
+		Message: "Proses QC Ribbon berhasil dimulai",
 		Data:    qcRibbon.ToResponse(),
 	})
 }
@@ -391,7 +391,7 @@ func (qcrc *QCRibbonController) ValidateQCRibbonProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCRibbonProduct - QC Ribbon not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Ribbon with id " + id + " not found.",
+			Error:   "QC Ribbon dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -401,7 +401,7 @@ func (qcrc *QCRibbonController) ValidateQCRibbonProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCRibbonProduct - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak sesuai",
 		})
 	}
 
@@ -410,7 +410,7 @@ func (qcrc *QCRibbonController) ValidateQCRibbonProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCRibbonProduct - QC Ribbon is not in progress or pending:", qcRibbon.Status)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Ribbon is not in progress or pending",
+			Error:   "QC Ribbon tidak sedang dalam status in progress atau pending",
 		})
 	}
 
@@ -422,7 +422,7 @@ func (qcrc *QCRibbonController) ValidateQCRibbonProduct(c fiber.Ctx) error {
 			log.Println("ValidateQCRibbonProduct - Invalid user ID:", err)
 			return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid user ID",
+				Error:   "ID pengguna tidak valid",
 			})
 		}
 
@@ -437,7 +437,7 @@ func (qcrc *QCRibbonController) ValidateQCRibbonProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCRibbonProduct - No order found with tracking number:", qcRibbon.TrackingNumber)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "No order found with tracking number " + qcRibbon.TrackingNumber,
+			Error:   "Tidak ditemukan pesanan dengan nomor pelacakan yang diberikan " + qcRibbon.TrackingNumber,
 		})
 	}
 
@@ -455,7 +455,7 @@ func (qcrc *QCRibbonController) ValidateQCRibbonProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCRibbonProduct - Product not found in order details:", req.SKU)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Product with SKU " + req.SKU + " not found in order details",
+			Error:   "Product dengan SKU " + req.SKU + " tidak ditemukan dalam detail pesanan",
 		})
 	}
 
@@ -464,7 +464,7 @@ func (qcrc *QCRibbonController) ValidateQCRibbonProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCRibbonProduct - Quantity mismatch for product:", req.SKU)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("Quantity mismatch for SKU %s. Expected: %d, Got: %d", req.SKU, matchedDetail.Quantity, req.Quantity),
+			Error:   fmt.Sprintf("Jumlah untuk SKU %s. Tidak sesuai: %d, Diterima: %d", req.SKU, matchedDetail.Quantity, req.Quantity),
 		})
 	}
 
@@ -473,13 +473,13 @@ func (qcrc *QCRibbonController) ValidateQCRibbonProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCRibbonProduct - Failed to update order detail:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order detail for product with SKU " + req.SKU,
+			Error:   "Gagal memperbarui detail pesanan untuk produk dengan SKU " + req.SKU,
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "QC Ribbon items with SKU " + req.SKU + " validated successfully",
+		Message: "Item QC Ribbon dengan SKU " + req.SKU + " berhasil divalidasi",
 		Data:    qcRibbon.ToResponse(),
 	})
 }
@@ -508,7 +508,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - QC Ribbon not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Ribbon with id " + id + " not found.",
+			Error:   "QC Ribbon dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -518,7 +518,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -527,7 +527,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - QC Ribbon is not in progress or pending:", qcRibbon.Status)
 		return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 			Success: true,
-			Message: "QC Ribbon is not in progress or pending",
+			Message: "QC Ribbon tidak sedang dalam status in proggress atau pending",
 			Data:    qcRibbon.ToResponse(),
 		})
 	}
@@ -539,7 +539,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - Invalid user ID:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -547,7 +547,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - User is not the one who marked QC Ribbon as pending:", userID)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Only the user who marked the QC Ribbon as pending can complete it",
+			Error:   "Hanya pengguna yang menandai QC Ribbon sebagai pending yang dapat menyelesaikan",
 		})
 	}
 
@@ -557,7 +557,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - No order found with tracking number:", qcRibbon.TrackingNumber)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "No order found with tracking number " + qcRibbon.TrackingNumber,
+			Error:   "Tidak ditemukan pesanan dengan nomor pelacakan yang diberikan " + qcRibbon.TrackingNumber,
 		})
 	}
 
@@ -566,7 +566,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 			log.Println("CompleteQcRibbon - Order details not validated:", qcRibbon.TrackingNumber)
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Order details not validated",
+				Error:   "Detail pesanan belum divalidasi",
 			})
 		}
 	}
@@ -578,7 +578,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		if boxIDSet[detailReq.BoxID] {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Duplicate box ID in the request",
+				Error:   "Terdapat ID box duplikat dalam permintaan",
 			})
 		}
 		boxIDSet[detailReq.BoxID] = true
@@ -606,7 +606,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - Failed to create QC Ribbon details:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create QC Ribbon details",
+			Error:   "Gagal membuat detail QC Ribbon",
 		})
 	}
 
@@ -617,7 +617,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - Failed to update QC Ribbon status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to complete QC Ribbon",
+			Error:   "Gagal menyelesaikan QC Ribbon",
 		})
 	}
 
@@ -627,7 +627,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - Failed to update order processing status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order processing status",
+			Error:   "Gagal memperbarui status pemrosesan pessanan",
 		})
 	}
 
@@ -636,7 +636,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - Failed to commit transaction:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to commit transaction",
+			Error:   "Gagal melakukan commit transaksi",
 		})
 	}
 
@@ -645,7 +645,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 		log.Println("CompleteQcRibbon - Failed to load updated QC Ribbon:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load updated QC Ribbon",
+			Error:   "Gagal memuat QC Ribbon yang telah diperbarui",
 		})
 	}
 
@@ -657,7 +657,7 @@ func (qcrc *QCRibbonController) CompleteQcRibbon(c fiber.Ctx) error {
 	log.Println("CompleteQcRibbon completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "QC Ribbon completed successfully",
+		Message: "QC Ribbon berhasil diselesaikan",
 		Data:    qcRibbon.ToResponse(),
 	})
 }
@@ -685,7 +685,7 @@ func (qcrc *QCRibbonController) PendingQCRibbon(c fiber.Ctx) error {
 		log.Println("PendingQCRibbon - QC Ribbon not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Ribbon with id " + id + " not found.",
+			Error:   "QC Ribbon dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -694,7 +694,7 @@ func (qcrc *QCRibbonController) PendingQCRibbon(c fiber.Ctx) error {
 		log.Println("PendingQCRibbon - QC Ribbon is not in progress:", qcRibbon.Status)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Ribbon is not in progress",
+			Error:   "QC Ribbon tidak sedang dalam status in progress",
 		})
 	}
 
@@ -704,7 +704,7 @@ func (qcrc *QCRibbonController) PendingQCRibbon(c fiber.Ctx) error {
 		log.Println("PendingQCRibbon - Failed to update QC Ribbon status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to mark QC Ribbon as pending",
+			Error:   "Gagal menandai QC Ribbon sebagai pending",
 		})
 	}
 
@@ -713,7 +713,7 @@ func (qcrc *QCRibbonController) PendingQCRibbon(c fiber.Ctx) error {
 		log.Println("PendingQCRibbon - Failed to load updated QC Ribbon:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load updated QC Ribbon",
+			Error:   "Gagal memuat QC Ribbon yang telah diperbarui",
 		})
 	}
 
@@ -726,7 +726,7 @@ func (qcrc *QCRibbonController) PendingQCRibbon(c fiber.Ctx) error {
 	log.Println("PendingQCRibbon completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "QC Ribbon marked as pending successfully",
+		Message: "QC Ribbon berhasil ditandai sebagai pending",
 		Data:    qcRibbon.ToResponse(),
 	})
 }

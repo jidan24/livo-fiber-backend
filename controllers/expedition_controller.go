@@ -75,7 +75,7 @@ func (bc *ExpeditionController) GetExpeditions(c fiber.Ctx) error {
 		log.Println("Error retrieving expeditions:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve expeditions",
+			Error:   "Gagal mengambil data expedisi",
 		})
 	}
 
@@ -132,14 +132,14 @@ func (bc *ExpeditionController) GetExpedition(c fiber.Ctx) error {
 		log.Println("Expedition with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Expedition with id " + id + " not found.",
+			Error:   "Expedisi dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("Expedition retrieved successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Expedition retrieved successfully",
+		Message: "Data expedisi berhasil diambil",
 		Data:    expedition.ToResponse(),
 	})
 }
@@ -165,7 +165,7 @@ func (bc *ExpeditionController) CreateExpedition(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -178,7 +178,7 @@ func (bc *ExpeditionController) CreateExpedition(c fiber.Ctx) error {
 		log.Println("Expedition with code " + req.ExpeditionCode + " already exists.")
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Expedition with code " + req.ExpeditionCode + " already exists.",
+			Error:   "Expedisi dengan kode " + req.ExpeditionCode + " sudah terdaftar.",
 		})
 	}
 
@@ -194,14 +194,14 @@ func (bc *ExpeditionController) CreateExpedition(c fiber.Ctx) error {
 		log.Println("Failed to create expedition:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create expedition",
+			Error:   "Gagal membuat expedisi",
 		})
 	}
 
 	log.Println("Expedition created successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Expedition created successfully",
+		Message: "Expedisi berhasil dibuat",
 		Data:    newExpedition.ToResponse(),
 	})
 }
@@ -229,7 +229,7 @@ func (bc *ExpeditionController) UpdateExpedition(c fiber.Ctx) error {
 		log.Println("Expedition with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Expedition with id " + id + " not found.",
+			Error:   "Expedisi dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -239,7 +239,7 @@ func (bc *ExpeditionController) UpdateExpedition(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -252,7 +252,7 @@ func (bc *ExpeditionController) UpdateExpedition(c fiber.Ctx) error {
 		log.Println("Expedition with code " + req.ExpeditionCode + " already exists.")
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Expedition with code " + req.ExpeditionCode + " already exists.",
+			Error:   "Expedisi dengan kode " + req.ExpeditionCode + " sudah terdaftar.",
 		})
 	}
 
@@ -266,14 +266,14 @@ func (bc *ExpeditionController) UpdateExpedition(c fiber.Ctx) error {
 		log.Println("Failed to update expedition:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update expedition",
+			Error:   "Gagal memperbarui expedisi",
 		})
 	}
 
 	log.Println("Expedition updated successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Expedition updated successfully",
+		Message: "Expedisi berhasil diperbarui",
 		Data:    expedition.ToResponse(),
 	})
 }
@@ -300,7 +300,7 @@ func (bc *ExpeditionController) DeleteExpedition(c fiber.Ctx) error {
 		log.Println("Expedition with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Expedition with id " + id + " not found.",
+			Error:   "Expedisi dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -309,13 +309,13 @@ func (bc *ExpeditionController) DeleteExpedition(c fiber.Ctx) error {
 		log.Println("Failed to delete expedition:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to delete expedition",
+			Error:   "Gagal menghapus expedisi",
 		})
 	}
 
 	log.Println("Expedition deleted successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Expedition deleted successfully",
+		Message: "Expedisi berhasil dihapus",
 	})
 }

@@ -74,7 +74,7 @@ func (rc *RoleController) GetRoles(c fiber.Ctx) error {
 		log.Println("GetRoles - Failed to retrieve roles:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve roles",
+			Error:   "Gagal mengambil data peran",
 		})
 	}
 
@@ -133,14 +133,14 @@ func (rc *RoleController) GetRole(c fiber.Ctx) error {
 		log.Println("GetRole - Role not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Role with id " + id + " not found.",
+			Error:   "Role dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("GetRole completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Role retrieved successfully",
+		Message: "Role berhasil diambil",
 		Data:    role.ToResponse(),
 	})
 }
@@ -167,7 +167,7 @@ func (rc *RoleController) CreateRole(c fiber.Ctx) error {
 		log.Println("CreateRole - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -176,7 +176,7 @@ func (rc *RoleController) CreateRole(c fiber.Ctx) error {
 	if err := rc.DB.Where("role_name = ?", req.RoleName).First(&existingRole).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Role with name " + req.RoleName + " already exists.",
+			Error:   "Role dengan nama " + req.RoleName + " sudah terdaftar.",
 		})
 	}
 
@@ -196,7 +196,7 @@ func (rc *RoleController) CreateRole(c fiber.Ctx) error {
 	if req.Hierarchy < currUserMinHierarchy {
 		return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Insufficient permissions to create role with higher privilege",
+			Error:   "Hak akses tidak cukup untuk membuat role dengan privilese lebih tinggi",
 		})
 	}
 
@@ -210,14 +210,14 @@ func (rc *RoleController) CreateRole(c fiber.Ctx) error {
 		log.Println("CreateRole - Failed to create role:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create role",
+			Error:   "Gagal membuat role",
 		})
 	}
 
 	log.Println("CreateRole completed successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Role created successfully",
+		Message: "Role Berhasil dibuat",
 		Data:    newRole.ToResponse(),
 	})
 }
@@ -246,7 +246,7 @@ func (rc *RoleController) UpdateRole(c fiber.Ctx) error {
 		log.Println("UpdateRole - Role not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Role with id " + id + " not found.",
+			Error:   "Role dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -255,7 +255,7 @@ func (rc *RoleController) UpdateRole(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -264,7 +264,7 @@ func (rc *RoleController) UpdateRole(c fiber.Ctx) error {
 	if err := rc.DB.Where("role_name = ? AND id != ?", req.RoleName, id).First(&existingRole).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Role with name " + req.RoleName + " already exists.",
+			Error:   "Role dengan nama " + req.RoleName + " sudah terdaftar.",
 		})
 	}
 
@@ -284,7 +284,7 @@ func (rc *RoleController) UpdateRole(c fiber.Ctx) error {
 	if req.Hierarchy < currUserMinHierarchy {
 		return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Insufficient permissions to create role with higher privilege",
+			Error:   "Hak akses tidak cukup untuk membuat role dengan privilies lebih tinggi",
 		})
 	}
 
@@ -296,14 +296,14 @@ func (rc *RoleController) UpdateRole(c fiber.Ctx) error {
 		log.Println("UpdateRole - Failed to update role:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update role",
+			Error:   "Gagal memperbarui role",
 		})
 	}
 
 	log.Println("UpdateRole completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Role updated successfully",
+		Message: "Role berhasil diperbarui",
 		Data:    role.ToResponse(),
 	})
 }
@@ -331,7 +331,7 @@ func (rc *RoleController) DeleteRole(c fiber.Ctx) error {
 		log.Println("DeleteRole - Role not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Role with id " + id + " not found.",
+			Error:   "Role dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -340,13 +340,13 @@ func (rc *RoleController) DeleteRole(c fiber.Ctx) error {
 		log.Println("DeleteRole - Failed to delete role:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to delete role",
+			Error:   "Gagal menghapus role",
 		})
 	}
 
 	log.Println("DeleteRole completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Role deleted successfully",
+		Message: "Role berhasil dihapus",
 	})
 }

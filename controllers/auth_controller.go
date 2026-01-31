@@ -58,7 +58,7 @@ func (ac *AuthController) Register(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -68,7 +68,7 @@ func (ac *AuthController) Register(c fiber.Ctx) error {
 		log.Println("Username already exists:", req.Username)
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Username already exists",
+			Error:   "Username sudah terdaftar",
 		})
 	}
 
@@ -77,7 +77,7 @@ func (ac *AuthController) Register(c fiber.Ctx) error {
 		log.Println("Email already exists:", req.Email)
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Email already exists",
+			Error:   "Email sudah terdaftar",
 		})
 	}
 
@@ -87,7 +87,7 @@ func (ac *AuthController) Register(c fiber.Ctx) error {
 		log.Println("Failed to hash password:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to hash password",
+			Error:   "Gagal melakukan hash kata sandi",
 		})
 	}
 
@@ -97,7 +97,7 @@ func (ac *AuthController) Register(c fiber.Ctx) error {
 		log.Println("Failed to get default role:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to get default role",
+			Error:   "Gagal mengambil peran default",
 		})
 	}
 
@@ -134,7 +134,7 @@ func (ac *AuthController) Register(c fiber.Ctx) error {
 		log.Println("Failed to create user:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create user",
+			Error:   "Gagal membuat pengguna",
 		})
 	}
 
@@ -144,7 +144,7 @@ func (ac *AuthController) Register(c fiber.Ctx) error {
 	log.Println("User registered successfully:", req.Username)
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User registered successfully",
+		Message: "Pengguna berhasil terdaftar",
 		Data:    user.ToResponse(),
 	})
 }
@@ -168,7 +168,7 @@ func (ac *AuthController) Login(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -178,7 +178,7 @@ func (ac *AuthController) Login(c fiber.Ctx) error {
 		log.Println("Invalid credentials for user:", req.Username)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid credentials",
+			Error:   "Username/Katasandi tidak valid",
 		})
 	}
 
@@ -187,7 +187,7 @@ func (ac *AuthController) Login(c fiber.Ctx) error {
 		log.Println("User account is disabled:", req.Username)
 		return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User account is disabled",
+			Error:   "Akun pengguna tidak aktif",
 		})
 	}
 
@@ -196,7 +196,7 @@ func (ac *AuthController) Login(c fiber.Ctx) error {
 		log.Println("Invalid credentials for user:", req.Username)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid credentials",
+			Error:   "Username/katasandi tidak valid",
 		})
 	}
 
@@ -218,7 +218,7 @@ func (ac *AuthController) Login(c fiber.Ctx) error {
 		log.Println("Failed to generate access token:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to generate access token",
+			Error:   "Gagal membuat akses token",
 		})
 	}
 
@@ -227,7 +227,7 @@ func (ac *AuthController) Login(c fiber.Ctx) error {
 		log.Println("Failed to generate refresh token:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to generate refresh token",
+			Error:   "Gagam membuat refresh token",
 		})
 	}
 
@@ -260,7 +260,7 @@ func (ac *AuthController) Login(c fiber.Ctx) error {
 		log.Println("Failed to create session:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create session",
+			Error:   "Gagal membuat sesi",
 		})
 	}
 
@@ -340,7 +340,7 @@ func (ac *AuthController) Logout(c fiber.Ctx) error {
 	log.Println("User logged out successfully, userID:", userID)
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Logged out successfully",
+		Message: "Berhasil logout",
 	})
 }
 
@@ -367,7 +367,7 @@ func (ac *AuthController) RefreshToken(c fiber.Ctx) error {
 			log.Println("Refresh token required:", err)
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Refresh token required",
+				Error:   "Refresh token diperlukan",
 			})
 		}
 		refreshToken = body.RefreshToken
@@ -379,7 +379,7 @@ func (ac *AuthController) RefreshToken(c fiber.Ctx) error {
 		log.Println("Invalid or expired refresh token:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid or expired refresh token",
+			Error:   "Refresh token tidak valid / kadaluwarsa",
 		})
 	}
 
@@ -389,7 +389,7 @@ func (ac *AuthController) RefreshToken(c fiber.Ctx) error {
 		log.Println("Invalid token type")
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid token type",
+			Error:   "Jenis token tidak valid",
 		})
 	}
 
@@ -399,7 +399,7 @@ func (ac *AuthController) RefreshToken(c fiber.Ctx) error {
 		log.Println("Session not found for refresh token:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Session not found",
+			Error:   "Sesi tidak ditemukan",
 		})
 	}
 
@@ -409,7 +409,7 @@ func (ac *AuthController) RefreshToken(c fiber.Ctx) error {
 		log.Println("Session expired for userID:", session.UserID)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Session expired",
+			Error:   "Sesi telah kadaluwarsa",
 		})
 	}
 
@@ -431,7 +431,7 @@ func (ac *AuthController) RefreshToken(c fiber.Ctx) error {
 		log.Println("Failed to generate access token:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to generate access token",
+			Error:   "Gagal menghasilkan access token",
 		})
 	}
 
@@ -441,7 +441,7 @@ func (ac *AuthController) RefreshToken(c fiber.Ctx) error {
 		log.Println("Failed to generate refresh token:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to generate refresh token",
+			Error:   "Gagal menghasilkan refresh token",
 		})
 	}
 

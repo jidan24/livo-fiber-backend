@@ -68,7 +68,7 @@ func (mac *MobileAttendanceController) VerifyUserFace(c fiber.Ctx) error {
 		log.Println("VerifyUserFace - User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User not found",
+			Error:   "Pengguna tidak ditemukan",
 		})
 	}
 
@@ -77,7 +77,7 @@ func (mac *MobileAttendanceController) VerifyUserFace(c fiber.Ctx) error {
 		log.Println("VerifyUserFace - Image file required:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Image file is required",
+			Error:   "File gambar wajib diunggah",
 		})
 	}
 
@@ -86,7 +86,7 @@ func (mac *MobileAttendanceController) VerifyUserFace(c fiber.Ctx) error {
 		log.Println("VerifyUserFace - Invalid image file type")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid image file type",
+			Error:   "Tipe file gambar tidak valid",
 		})
 	}
 
@@ -95,7 +95,7 @@ func (mac *MobileAttendanceController) VerifyUserFace(c fiber.Ctx) error {
 		log.Println("VerifyUserFace - Failed to save image file:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to save image file",
+			Error:   "Gagal menyimpan file gambar",
 		})
 	}
 	defer os.Remove(tmpPath)
@@ -105,7 +105,7 @@ func (mac *MobileAttendanceController) VerifyUserFace(c fiber.Ctx) error {
 		log.Println("VerifyUserFace - Face verification failed:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("Face verification failed: %v", err),
+			Error:   fmt.Sprintf("Verifikasi wajah gagal: %v", err),
 		})
 	}
 
@@ -124,7 +124,7 @@ func (mac *MobileAttendanceController) VerifyUserFace(c fiber.Ctx) error {
 	log.Println("VerifyUserFace completed successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Face verified successfully",
+		Message: "Verifikasi wajah berhasil",
 		Data:    result,
 	})
 }
@@ -158,7 +158,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		log.Println("MobileCheckInUserByFace - User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User not found",
+			Error:   "Pengguna tidak ditemukan",
 		})
 	}
 
@@ -167,7 +167,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		log.Println("MobileCheckInUserByFace - Image file required:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Image file is required",
+			Error:   "File gambar wajib diunggah",
 		})
 	}
 
@@ -176,7 +176,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		log.Println("MobileCheckInUserByFace - Invalid image file type")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid image file type",
+			Error:   "Tipe file gambar tidak valid",
 		})
 	}
 
@@ -185,7 +185,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		log.Println("MobileCheckInUserByFace - Failed to save image:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to save image file",
+			Error:   "Gagal menyimpan file gambar",
 		})
 	}
 	defer os.Remove(tmpPath)
@@ -195,7 +195,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		log.Println("MobileCheckInUserByFace - Face verification failed:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("Face verification failed: %v", err),
+			Error:   fmt.Sprintf("Verifikasi wajah gagal: %v", err),
 		})
 	}
 
@@ -211,7 +211,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 	if locationIDStr == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Location ID is required",
+			Error:   "ID lokasi wajib diisi",
 		})
 	}
 
@@ -219,7 +219,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid Location ID",
+			Error:   "ID lokasi tidak valid",
 		})
 	}
 
@@ -231,7 +231,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 	if latitudeStr == "" || longitudeStr == "" || accuracyStr == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Latitude, longitude, and accuracy are required",
+			Error:   "Latitude, longitude, and akurasi wajib diisi",
 		})
 	}
 
@@ -239,7 +239,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid latitude format",
+			Error:   "Format latitude tidak valid",
 		})
 	}
 
@@ -247,7 +247,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid longitude format",
+			Error:   "Format longitude tidak valid",
 		})
 	}
 
@@ -255,7 +255,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid accuracy format",
+			Error:   "Format akurasi tidak valid",
 		})
 	}
 
@@ -264,7 +264,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 	if err := mac.DB.Where("id = ?", locationID).First(&location).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Location not found",
+			Error:   "Lokasi tidak ditemukan",
 		})
 	}
 
@@ -275,7 +275,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 	if distance > 10.0 {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("You are too far from the check-in location. Distance: %.2f meters", distance),
+			Error:   fmt.Sprintf("Anda terlalu jauh dari lokasi check-in. Jarak: %.2f meter", distance),
 		})
 	}
 
@@ -299,7 +299,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		if accuracyDiff > 50 {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   fmt.Sprintf("Suspicious GPS behavior detected: Accuracy suddenly changed from %.1f to %.1f meters", lastAccuracy, accuracy),
+				Error:   fmt.Sprintf("Terdeteksi perilaku GPS mencurigakan: Akurasi tiba-tiba berubah dari %.1f menjadi %.1f meter", lastAccuracy, accuracy),
 			})
 		}
 	}
@@ -317,7 +317,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		if allSame && accuracy > 0 {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Suspicious GPS behavior detected: Accuracy values are suspiciously consistent",
+				Error:   "Terdeteksi perilaku GPS mencurigakan: Nilai akurasi terlalu konsisten",
 			})
 		}
 	}
@@ -341,7 +341,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 			if speed > 50 {
 				return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 					Success: false,
-					Error:   fmt.Sprintf("Suspicious GPS behavior detected: Impossible travel speed (%.2f km/h)", speed*3.6),
+					Error:   fmt.Sprintf("Terdeteksi perilaku GPS mencurigakan: Kecepatan perjalanan tidak mungkin (%.2f km/h)", speed*3.6),
 				})
 			}
 		}
@@ -351,7 +351,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 	if accuracy > 30 {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("GPS accuracy is too poor: %.1f meters. Please ensure GPS is enabled and try again.", accuracy),
+			Error:   fmt.Sprintf("Akurasi GPS terlalu rendah: %.1f meter. Pastikan GPS aktif dan coba lagi.", accuracy),
 		})
 	}
 
@@ -365,7 +365,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		log.Println("MobileCheckInUserByFace - User already checked in today")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User already checked in today",
+			Error:   "Pengguna sudah melakukan check-in hari ini",
 		})
 	}
 	log.Println("MobileCheckInUserByFace - No check-in found for today, proceeding...")
@@ -395,7 +395,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		if checkedInTime.After(fulldayCheckInEnd) {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   fmt.Sprintf("Check-in time has expired for fullday shift. Deadline was %s", fulldayCheckInEnd.Format("15:04")),
+				Error:   fmt.Sprintf("Waktu check-in untuk shift penuh telah berakhir. Batas waktu %s", fulldayCheckInEnd.Format("15:04")),
 			})
 		}
 
@@ -410,7 +410,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		if checkedInTime.After(halfdayCheckInEnd) {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   fmt.Sprintf("Check-in time has expired for halfday shift. Deadline was %s", halfdayCheckInEnd.Format("15:04")),
+				Error:   fmt.Sprintf("Waktu check-in untuk shift setengah hari telah berakhir. Batas waktu %s", halfdayCheckInEnd.Format("15:04")),
 			})
 		}
 
@@ -445,7 +445,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 		log.Println("MobileCheckInUserByFace - Failed to create attendance:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create attendance record",
+			Error:   "Gagal membuat data absensi",
 		})
 	}
 
@@ -455,7 +455,7 @@ func (mac *MobileAttendanceController) MobileCheckInUserByFace(c fiber.Ctx) erro
 	log.Println("MobileCheckInUserByFace completed successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User checked in successfully",
+		Message: "Pengguna berhasil melakukan check-in",
 		Data: MobileCheckInResponse{
 			Matched:    true,
 			UserID:     strconv.Itoa(int(user.ID)),
@@ -496,7 +496,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User not found",
+			Error:   "Pengguna tidak ditemukan",
 		})
 	}
 
@@ -505,7 +505,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Image file required:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Image file is required",
+			Error:   "File gambar wajib diubah",
 		})
 	}
 
@@ -514,7 +514,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Invalid image file type")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid image file type",
+			Error:   "Tipe file gambar tidak valid",
 		})
 	}
 
@@ -523,7 +523,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Failed to save image:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to save image file",
+			Error:   "Gagal menyimpan file gambar",
 		})
 	}
 	defer os.Remove(tmpPath)
@@ -533,7 +533,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Face verification failed:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("Face verification failed: %v", err),
+			Error:   fmt.Sprintf("Gagal verifikasi wajah: %v", err),
 		})
 	}
 
@@ -541,7 +541,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Printf("Face does not match (userID=%s)\n", currUserID)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Face verification failed - face does not match",
+			Error:   "Verifikasi wajah gagal-wajah tidak cocok",
 		})
 	}
 
@@ -550,7 +550,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Location ID is required")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Location ID is required",
+			Error:   "ID lokasi wajib diisi",
 		})
 	}
 
@@ -559,7 +559,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Invalid Location ID")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid Location ID",
+			Error:   "ID lokasi tidak valid",
 		})
 	}
 
@@ -572,7 +572,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Latitude, longitude, and accuracy are required")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Latitude, longitude, and accuracy are required",
+			Error:   "Latitude, longitude, and akurasi wajib diisi",
 		})
 	}
 
@@ -581,7 +581,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Invalid latitude format")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid latitude format",
+			Error:   "format latitude tidak valid",
 		})
 	}
 
@@ -590,7 +590,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Invalid longitude format")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid longitude format",
+			Error:   "format longitude tidak valid",
 		})
 	}
 
@@ -599,7 +599,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Invalid accuracy format")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid accuracy format",
+			Error:   "format accuracy tidak valid",
 		})
 	}
 
@@ -609,7 +609,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Location not found")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Location not found",
+			Error:   "Lokasi tidak ditemukan",
 		})
 	}
 
@@ -621,7 +621,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("User is too far from the check-in location")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("You are too far from the check-in location. Distance: %.2f meters", distance),
+			Error:   fmt.Sprintf("Anda terlalu jauh dari lokasi check-in. Jarak: %.2f meter", distance),
 		})
 	}
 
@@ -646,7 +646,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 			log.Println("Suspicious GPS behavior detected")
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   fmt.Sprintf("Suspicious GPS behavior detected: Accuracy suddenly changed from %.1f to %.1f meters", lastAccuracy, accuracy),
+				Error:   fmt.Sprintf("Terdeteksi perilaku GPS mencurigakan: Akurasi tiba-tiba berubah dari %.1f Menjadi %.1f meter", lastAccuracy, accuracy),
 			})
 		}
 	}
@@ -665,7 +665,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 			log.Println("Suspicious GPS behavior detected: Accuracy values are suspiciously consistent")
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Suspicious GPS behavior detected: Accuracy values are suspiciously consistent",
+				Error:   "Terdeteksi perilaku GPS mencurigakan: Nilai akurasi terlalu konsisten",
 			})
 		}
 	}
@@ -690,7 +690,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 				log.Println("Suspicious GPS behavior detected: Impossible travel speed")
 				return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 					Success: false,
-					Error:   fmt.Sprintf("Suspicious GPS behavior detected: Impossible travel speed (%.2f km/h)", speed*3.6),
+					Error:   fmt.Sprintf("Terdeteksi perilaku GPS mencurigakan: Kecepatan perjalanan tidak mungkin (%.2f km/h)", speed*3.6),
 				})
 			}
 		}
@@ -701,7 +701,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("GPS accuracy is too poor")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("GPS accuracy is too poor: %.1f meters. Please ensure GPS is enabled and try again.", accuracy),
+			Error:   fmt.Sprintf("Akurasi GPS terlalu rendah: %.1f meter. Pastikan GPS aktif dan coba lagi.", accuracy),
 		})
 	}
 
@@ -714,7 +714,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("User has not checked in today")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User has not checked in today",
+			Error:   "Pengguna belum melakukan check-in hari ini",
 		})
 	}
 
@@ -762,7 +762,7 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 			regularCheckOutStart.Format("15:04"))
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error: fmt.Sprintf("Not within valid check-out time. Early checkout: %s-%s, Regular checkout: %s onwards",
+			Error: fmt.Sprintf("Tidak berada dalam waktu check-out yang valid. Cehck-out awal: %s-%s, Check-out reguler: %s Mulai",
 				earlyCheckOut.Format("15:04"), earlyCheckOutEnd.Format("15:04"),
 				regularCheckOutStart.Format("15:04")),
 		})
@@ -773,14 +773,14 @@ func (mac *MobileAttendanceController) MobileCheckOutUserByFace(c fiber.Ctx) err
 		log.Println("Failed to update attendance record:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update attendance record",
+			Error:   "Gagal memperbarui data absensi",
 		})
 	}
 
 	log.Println("MobileCheckOutUserByFace completed successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User checked out successfully",
+		Message: "Pengguna berhasil melakukan check-out",
 		Data: MobileCheckOutResponse{
 			Matched:    true,
 			UserID:     result.UserID,

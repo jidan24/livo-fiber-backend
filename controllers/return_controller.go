@@ -77,7 +77,7 @@ func (rc *ReturnController) GetReturns(c fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid start_date format. Use YYYY-MM-DD.",
+				Error:   "Format start_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		startOfDay := time.Date(parsedStartDate.Year(), parsedStartDate.Month(), parsedStartDate.Day(), 0, 0, 0, 0, parsedStartDate.Location())
@@ -89,7 +89,7 @@ func (rc *ReturnController) GetReturns(c fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid end_date format. Use YYYY-MM-DD.",
+				Error:   "Format end_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		endOfDay := time.Date(parsedEndDate.Year(), parsedEndDate.Month(), parsedEndDate.Day(), 23, 59, 59, 0, parsedEndDate.Location())
@@ -111,7 +111,7 @@ func (rc *ReturnController) GetReturns(c fiber.Ctx) error {
 		log.Println("GetReturns - Failed to retrieve returns:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve returns",
+			Error:   "Gagal mengambil data retur",
 		})
 	}
 
@@ -204,7 +204,7 @@ func (rc *ReturnController) GetReturn(c fiber.Ctx) error {
 		log.Println("GetReturn - Return not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Return with id " + id + " not found",
+			Error:   "Return dengan id " + id + " tidak ditemukan",
 		})
 	}
 
@@ -233,7 +233,7 @@ func (rc *ReturnController) GetReturn(c fiber.Ctx) error {
 	log.Println("GetReturn completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Return retrieved successfully",
+		Message: "Data retur berhasil diambil",
 		Data:    ret.ToResponse(),
 	})
 }
@@ -260,7 +260,7 @@ func (rc *ReturnController) CreateReturn(c fiber.Ctx) error {
 		log.Println("CreateReturn - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -270,7 +270,7 @@ func (rc *ReturnController) CreateReturn(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -282,7 +282,7 @@ func (rc *ReturnController) CreateReturn(c fiber.Ctx) error {
 	if err := rc.DB.Where("new_tracking_number = ?", req.NewTrackingNumber).First(&existingReturn).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Return with new tracking number " + req.NewTrackingNumber + " already exists",
+			Error:   "Retur dengan nomor pelacakan baru " + req.NewTrackingNumber + " sudah terdaftar",
 		})
 	}
 
@@ -297,7 +297,7 @@ func (rc *ReturnController) CreateReturn(c fiber.Ctx) error {
 		if err := rc.DB.Preload("OrderDetails").Where("tracking_number = ?", req.TrackingNumber).First(&orderData).Error; err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Order with tracking number " + *req.TrackingNumber + " not found",
+				Error:   "Pesanan dengan nomor pelacakan " + *req.TrackingNumber + " tidak ditemukan",
 			})
 		}
 		order = &orderData
@@ -333,7 +333,7 @@ func (rc *ReturnController) CreateReturn(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create return",
+			Error:   "Gagal membuat retur",
 		})
 	}
 
@@ -352,7 +352,7 @@ func (rc *ReturnController) CreateReturn(c fiber.Ctx) error {
 				tx.Rollback()
 				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 					Success: false,
-					Error:   "Failed to create return details",
+					Error:   "Gagal membuat detail retur",
 				})
 			}
 		}
@@ -363,7 +363,7 @@ func (rc *ReturnController) CreateReturn(c fiber.Ctx) error {
 		log.Println("CreateReturn - Failed to commit transaction:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to commit transaction",
+			Error:   "Gagal melakukan commit transaksi",
 		})
 	}
 
@@ -372,7 +372,7 @@ func (rc *ReturnController) CreateReturn(c fiber.Ctx) error {
 		log.Println("CreateReturn - Failed to retrieve created return:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve created return",
+			Error:   "Gagal mengambil data retur yang baru dibuat",
 		})
 	}
 
@@ -401,7 +401,7 @@ func (rc *ReturnController) CreateReturn(c fiber.Ctx) error {
 	log.Println("CreateReturn completed successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Return created successfully",
+		Message: "Retur berhasil dibuat",
 		Data:    ret.ToResponse(),
 	})
 }
@@ -430,7 +430,7 @@ func (rc *ReturnController) UpdateReturn(c fiber.Ctx) error {
 		log.Println("UpdateReturn - Return not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Return with id " + id + " not found",
+			Error:   "Return dengan id " + id + " tidak ditemukan",
 		})
 	}
 
@@ -439,7 +439,7 @@ func (rc *ReturnController) UpdateReturn(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -449,7 +449,7 @@ func (rc *ReturnController) UpdateReturn(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -465,7 +465,7 @@ func (rc *ReturnController) UpdateReturn(c fiber.Ctx) error {
 		if err := rc.DB.Preload("OrderDetails").Where("tracking_number = ?", req.TrackingNumber).First(&order).Error; err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Order with tracking number " + *req.TrackingNumber + " not found",
+				Error:   "Pesanan dangan nomor pelacakan " + *req.TrackingNumber + " tidak ditemukan",
 			})
 		}
 	}
@@ -476,7 +476,7 @@ func (rc *ReturnController) UpdateReturn(c fiber.Ctx) error {
 		if err := rc.DB.Where("tracking_number = ? AND id <> ?", req.TrackingNumber, ret.ID).First(&existingReturn).Error; err == nil {
 			return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Return with tracking number " + *req.TrackingNumber + " already exists",
+				Error:   "Retur dengan nomor pelacakan " + *req.TrackingNumber + " sudah terdaftar",
 			})
 		}
 	}
@@ -512,7 +512,7 @@ func (rc *ReturnController) UpdateReturn(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update return",
+			Error:   "Gagal memperbarui retur",
 		})
 	}
 
@@ -531,7 +531,7 @@ func (rc *ReturnController) UpdateReturn(c fiber.Ctx) error {
 				tx.Rollback()
 				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 					Success: false,
-					Error:   "Failed to create return details",
+					Error:   "Gagal membuat detail retur",
 				})
 			}
 		}
@@ -542,7 +542,7 @@ func (rc *ReturnController) UpdateReturn(c fiber.Ctx) error {
 		log.Println("UpdateReturn - Failed to commit transaction:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to commit transaction",
+			Error:   "Gagal melakukan commit transaksi",
 		})
 	}
 
@@ -551,7 +551,7 @@ func (rc *ReturnController) UpdateReturn(c fiber.Ctx) error {
 		log.Println("UpdateReturn - Failed to retrieve updated return:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve updated return",
+			Error:   "Gagal mengambil data retur",
 		})
 	}
 
@@ -580,7 +580,7 @@ func (rc *ReturnController) UpdateReturn(c fiber.Ctx) error {
 	log.Println("UpdateReturn completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Return updated successfully",
+		Message: "Retur berhasil diperbarui",
 		Data:    ret.ToResponse(),
 	})
 }

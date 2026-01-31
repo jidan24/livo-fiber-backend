@@ -85,7 +85,7 @@ func (qcoc *QCOnlineController) GetQCOnlines(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -109,7 +109,7 @@ func (qcoc *QCOnlineController) GetQCOnlines(c fiber.Ctx) error {
 	if err := query.Limit(limit).Offset(offset).Find(&qcOnlines).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve QC Onlines",
+			Error:   "Gagal mengambil data QC Online",
 		})
 	}
 
@@ -176,7 +176,7 @@ func (qcoc *QCOnlineController) GetQCOnline(c fiber.Ctx) error {
 		log.Println("GetQCOnline - QC Online not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Online with id " + id + " not found.",
+			Error:   "QC Online dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -189,7 +189,7 @@ func (qcoc *QCOnlineController) GetQCOnline(c fiber.Ctx) error {
 	log.Println("GetQCOnline completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "QC Online retrieved successfully",
+		Message: "QC Online berhasil diambil",
 		Data:    qcOnline.ToResponse(),
 	})
 }
@@ -225,7 +225,7 @@ func (qcoc *QCOnlineController) GetChartQCOnlines(c fiber.Ctx) error {
 	if err := qcoc.DB.Model(&models.QCOnline{}).Select("DATE(created_at) as date, COUNT(*) as count").Where("created_at >= ? AND created_at < ?", startOfMonth, startOfNextMonth).Group("DATE(created_at)").Order("date ASC").Scan(&dailyCounts).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve QC Online data",
+			Error:   "Gagal mengambil data QC Online",
 		})
 	}
 
@@ -234,7 +234,7 @@ func (qcoc *QCOnlineController) GetChartQCOnlines(c fiber.Ctx) error {
 	if err := qcoc.DB.Model(&models.QCOnline{}).Where("created_at >= ? AND created_at < ?", startOfMonth, startOfNextMonth).Count(&totalCount).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve total QC Online count",
+			Error:   "Gagal mengambil total jumlah QC Online",
 		})
 	}
 
@@ -279,7 +279,7 @@ func (qcoc *QCOnlineController) QCOnlineStart(c fiber.Ctx) error {
 		log.Println("QCOnlineStart - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -289,7 +289,7 @@ func (qcoc *QCOnlineController) QCOnlineStart(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -302,7 +302,7 @@ func (qcoc *QCOnlineController) QCOnlineStart(c fiber.Ctx) error {
 		log.Println("QCOnlineStart - Tracking number already in QC Online records:", req.TrackingNumber)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Tracking number " + req.TrackingNumber + " is already in QC Online processing.",
+			Error:   "Nomor pelacakan " + req.TrackingNumber + " sudah berada dalam proses QC Online.",
 		})
 	}
 
@@ -312,7 +312,7 @@ func (qcoc *QCOnlineController) QCOnlineStart(c fiber.Ctx) error {
 		log.Println("QCOnlineStart - No order found with tracking number in picking completed status:", req.TrackingNumber)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "No order found with tracking number " + req.TrackingNumber + " in picking completed status.",
+			Error:   "Tidak ditemukan pesanan dengan nomor pelacakan " + req.TrackingNumber + " dalam status picking completed.",
 		})
 	}
 
@@ -337,7 +337,7 @@ func (qcoc *QCOnlineController) QCOnlineStart(c fiber.Ctx) error {
 		log.Println("QCOnlineStart - Failed to create QC Online record:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to start QC Online processing",
+			Error:   "Gagal memulai proses QC Online",
 		})
 	}
 
@@ -347,7 +347,7 @@ func (qcoc *QCOnlineController) QCOnlineStart(c fiber.Ctx) error {
 		log.Println("QCOnlineStart - Failed to update order processing status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order processing status",
+			Error:   "Gagal memperbarui status pemrosesan pesanan",
 		})
 	}
 
@@ -356,14 +356,14 @@ func (qcoc *QCOnlineController) QCOnlineStart(c fiber.Ctx) error {
 		log.Println("QCOnlineStart - Failed to commit transaction:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to start QC Online processing",
+			Error:   "Gagal memulai proses QC Online",
 		})
 	}
 
 	log.Println("QCOnlineStart completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "QC Online processing started successfully",
+		Message: "Proses QC Online berhasil dimulai",
 		Data:    qcOnline.ToResponse(),
 	})
 }
@@ -391,7 +391,7 @@ func (qcoc *QCOnlineController) ValidateQCOnlineProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCOnlineProduct - QC Online not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Online with id " + id + " not found.",
+			Error:   "QC Online dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -401,7 +401,7 @@ func (qcoc *QCOnlineController) ValidateQCOnlineProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCOnlineProduct - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -410,7 +410,7 @@ func (qcoc *QCOnlineController) ValidateQCOnlineProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCOnlineProduct - QC Online is not in progress or pending:", qcOnline.Status)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Online is not in progress or pending",
+			Error:   "QC Online tidak sedang dalam status in progress atau pending",
 		})
 	}
 
@@ -421,7 +421,7 @@ func (qcoc *QCOnlineController) ValidateQCOnlineProduct(c fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid user ID",
+				Error:   "ID pengguna tidak valid",
 			})
 		}
 
@@ -436,7 +436,7 @@ func (qcoc *QCOnlineController) ValidateQCOnlineProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCOnlineProduct - No order found with tracking number:", qcOnline.TrackingNumber)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "No order found with tracking number " + qcOnline.TrackingNumber,
+			Error:   "Tidak ditemukan pesanan dangan nomor pelacakan yang diberikan " + qcOnline.TrackingNumber,
 		})
 	}
 
@@ -454,7 +454,7 @@ func (qcoc *QCOnlineController) ValidateQCOnlineProduct(c fiber.Ctx) error {
 		log.Println("ValidatedQCOnlineProduct - Product not found in order details:", req.SKU)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Product with SKU " + req.SKU + " not found in order details.",
+			Error:   "Product dengan SKU " + req.SKU + " tidak ditemukan detail pesanan.",
 		})
 	}
 
@@ -463,7 +463,7 @@ func (qcoc *QCOnlineController) ValidateQCOnlineProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCOnlineProduct - Quantity mismatch for product:", req.SKU)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("Quantity mismatch for SKU %s. Expected: %d, Got: %d", req.SKU, matchedDetail.Quantity, req.Quantity),
+			Error:   fmt.Sprintf("Jumlah untuk SKU tidak sesuai %s. Diharapkan: %d, Diterima: %d", req.SKU, matchedDetail.Quantity, req.Quantity),
 		})
 	}
 
@@ -472,13 +472,13 @@ func (qcoc *QCOnlineController) ValidateQCOnlineProduct(c fiber.Ctx) error {
 		log.Println("ValidateQCOnlineProduct - Failed to update order detail:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order detail for product with SKU " + req.SKU,
+			Error:   "Gagal memperbarui detail pesanan untuk produk dengan SKU " + req.SKU,
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Product with SKU " + req.SKU + " validated successfully.",
+		Message: "Produk dengan SKU " + req.SKU + " berhasil divalidasi.",
 		Data:    qcOnline.ToResponse(),
 	})
 }
@@ -507,7 +507,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - QC Online not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Online with id " + id + " not found.",
+			Error:   "QC Online dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -517,7 +517,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -526,7 +526,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - QC Online is not in progress or pending:", qcOnline.Status)
 		return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 			Success: true,
-			Message: "QC Online is not in progress or pending",
+			Message: "QC Online tidak sedang dalam status in progress atau pending",
 			Data:    qcOnline.ToResponse(),
 		})
 	}
@@ -538,7 +538,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - Invalid user ID:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -546,7 +546,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - User is not the one who marked QC Online as pending:", userID)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Only the user who marked the QC Online as pending can complete it",
+			Error:   "Hanya pengguna yang menandai QC Online sebagai pending yang dapat menyelesaikannya",
 		})
 	}
 
@@ -556,7 +556,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - No order found with tracking number:", qcOnline.TrackingNumber)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "No order found with tracking number " + qcOnline.TrackingNumber,
+			Error:   "Tidak ditemukan pesanan dengan nomor pelacakan yang diberikan " + qcOnline.TrackingNumber,
 		})
 	}
 
@@ -565,7 +565,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 			log.Println("CompleteQcOnline - Order details not validated:", qcOnline.TrackingNumber)
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Order details not validated",
+				Error:   "Detail pesanan belum divalidasi",
 			})
 		}
 	}
@@ -577,7 +577,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		if boxIDSet[detailReq.BoxID] {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Duplicate box ID in the request",
+				Error:   "Terdapat ID box duplikat dalam permintaan",
 			})
 		}
 		boxIDSet[detailReq.BoxID] = true
@@ -605,7 +605,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - Failed to create QC Online details:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create QC Online details",
+			Error:   "Gagal membuat detail QC Online",
 		})
 	}
 
@@ -616,7 +616,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - Failed to update QC Online status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update QC Online status",
+			Error:   "Gagal memperbarui status QC Online",
 		})
 	}
 
@@ -626,7 +626,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - Failed to update order processing status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order processing status",
+			Error:   "Gagal memperbarui status pemrosesan pesanan",
 		})
 	}
 
@@ -635,7 +635,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - Failed to commit transaction:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to complete QC Online",
+			Error:   "Gagal menyelesaikan proses QC Online",
 		})
 	}
 
@@ -644,7 +644,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 		log.Println("CompleteQcOnline - Failed to reload QC Online record:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve completed QC Online",
+			Error:   "Gagal mengambil data QC Online yang telah selesai",
 		})
 	}
 
@@ -656,7 +656,7 @@ func (qcoc *QCOnlineController) CompleteQcOnline(c fiber.Ctx) error {
 	log.Println("CompleteQcOnline completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "QC Online completed successfully",
+		Message: "Proses QC Online berhasil diselesaikan",
 		Data:    qcOnline.ToResponse(),
 	})
 }
@@ -684,7 +684,7 @@ func (qcoc *QCOnlineController) PendingQCOnline(c fiber.Ctx) error {
 		log.Println("PendingQCOnline - QC Online not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Online with id " + id + " not found.",
+			Error:   "QC Online dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -693,7 +693,7 @@ func (qcoc *QCOnlineController) PendingQCOnline(c fiber.Ctx) error {
 		log.Println("PendingQCOnline - QC Online is not in progress:", qcOnline.Status)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "QC Online is not in progress",
+			Error:   "QC Online tidak sedang dalam status in progress",
 		})
 	}
 
@@ -703,7 +703,7 @@ func (qcoc *QCOnlineController) PendingQCOnline(c fiber.Ctx) error {
 		log.Println("PendingQCOnline - Failed to update QC Online status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to mark QC Online as pending",
+			Error:   "Gagal menandai QC Online sebagai pending",
 		})
 	}
 
@@ -712,7 +712,7 @@ func (qcoc *QCOnlineController) PendingQCOnline(c fiber.Ctx) error {
 		log.Println("PendingQCOnline - Failed to reload QC Online record:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve pending QC Online",
+			Error:   "Gagal mengambil data QC Online yang pending",
 		})
 	}
 
@@ -725,7 +725,7 @@ func (qcoc *QCOnlineController) PendingQCOnline(c fiber.Ctx) error {
 	log.Println("PendingQCOnline completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "QC Online marked as pending successfully",
+		Message: "QC Online berhasil ditandai sebagai pending",
 		Data:    qcOnline.ToResponse(),
 	})
 }

@@ -80,7 +80,7 @@ func (oc *OutboundController) GetOutbounds(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -105,7 +105,7 @@ func (oc *OutboundController) GetOutbounds(c fiber.Ctx) error {
 		log.Println("GetOutbounds - Failed to retrieve outbounds:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve outbounds",
+			Error:   "Gagal mengambil data outbounds",
 		})
 	}
 
@@ -172,7 +172,7 @@ func (oc *OutboundController) GetOutbound(c fiber.Ctx) error {
 		log.Println("GetOutbound - Outbound not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Outbound with id" + id + " not found.",
+			Error:   "Outbound dengan id" + id + " tidak ditemukan.",
 		})
 	}
 
@@ -185,7 +185,7 @@ func (oc *OutboundController) GetOutbound(c fiber.Ctx) error {
 	log.Println("GetOutbound completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Outbound retrieved successfully",
+		Message: "Data outbound berhasil diambil",
 		Data:    outbound.ToResponse(),
 	})
 }
@@ -211,7 +211,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 		log.Println("CreateOutbound - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -224,7 +224,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -233,7 +233,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 	if err := oc.DB.Where("tracking_number = ? AND processing_status = ?", req.TrackingNumber, "qc_completed").First(&order).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Tracking number does not exist in orders with processing status 'qc completed'",
+			Error:   "Nomor pelacakan tidak ada pada pesanan berstatus qc completed'",
 		})
 	}
 
@@ -247,7 +247,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 	if !qcRibbonExists && !qcOnlineExists {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Tracking number must exist in either QC Ribbons or QC Onlines",
+			Error:   "Nomor pelacakan harus ada di QC Ribbons atau QC Onlines",
 		})
 	}
 
@@ -256,7 +256,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 	if err := oc.DB.Where("tracking_number = ?", req.TrackingNumber).First(&existingOutbound).Error; err == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Outbound with this tracking number already exists",
+			Error:   "Outbound dengan nomor pelacakan ini sudah ada",
 		})
 	}
 
@@ -273,7 +273,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 		if err := oc.DB.Find(&expeditions).Error; err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to retrieve expeditions",
+				Error:   "Gagal mengambil data ekspedisi",
 			})
 		}
 
@@ -294,7 +294,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 		if !expeditionFound {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "No expedition found for the given tracking number prefix",
+				Error:   "Tidak ditemukan ekspedisi untuk awalan nomor pelacakan yang diberikan",
 			})
 		}
 	}
@@ -310,7 +310,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 	if err := oc.DB.Create(&outbound).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create outbound",
+			Error:   "Gagal membuat outbound",
 		})
 	}
 
@@ -318,7 +318,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 	if err := oc.DB.Model(&models.Order{}).Where("tracking_number = ?", req.TrackingNumber).Update("processing_status", "outbound_completed").Update("event_status", "completed").Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order status",
+			Error:   "Gagal memperbarui status pesanan",
 		})
 	}
 
@@ -326,7 +326,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OutboundUser").Where("id = ?", outbound.ID).First(&outbound).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve created outbound",
+			Error:   "Gagal mengambil data outbound yang baru dibuat",
 		})
 	}
 
@@ -339,7 +339,7 @@ func (oc *OutboundController) CreateOutbound(c fiber.Ctx) error {
 	log.Println("CreateOutbound completed successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Outbound created successfully",
+		Message: "Outbound berhasil dibuat",
 		Data:    outbound.ToResponse(),
 	})
 }
@@ -368,7 +368,7 @@ func (oc *OutboundController) UpdateOutbound(c fiber.Ctx) error {
 		log.Println("UpdateOutbound - Outbound not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Outbound with id " + id + " not found.",
+			Error:   "Outbound dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -377,7 +377,7 @@ func (oc *OutboundController) UpdateOutbound(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -385,7 +385,7 @@ func (oc *OutboundController) UpdateOutbound(c fiber.Ctx) error {
 	if len(outbound.TrackingNumber) < 4 || outbound.TrackingNumber[:4] != "TKP0" {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Only outbounds with tracking numbers starting with 'TKP0' can be updated.",
+			Error:   "Hanya outbound dengan nomor pelacakan yang diawali 'TKPO' yang dapat diperbarui.",
 		})
 	}
 
@@ -397,7 +397,7 @@ func (oc *OutboundController) UpdateOutbound(c fiber.Ctx) error {
 	if err := oc.DB.Save(&outbound).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update outbound",
+			Error:   "Gagal memperbarui outbound",
 		})
 	}
 
@@ -405,7 +405,7 @@ func (oc *OutboundController) UpdateOutbound(c fiber.Ctx) error {
 	if err := oc.DB.Preload("OutboundUser").Where("id = ?", outbound.ID).First(&outbound).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve updated outbound",
+			Error:   "Gagal mengambil data outbound yang telah diperbarui",
 		})
 	}
 
@@ -418,7 +418,7 @@ func (oc *OutboundController) UpdateOutbound(c fiber.Ctx) error {
 	log.Println("UpdateOutbound completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Outbound updated successfully",
+		Message: "Outbound berhasil diperbarui",
 		Data:    outbound.ToResponse(),
 	})
 }
@@ -454,7 +454,7 @@ func (oc *OutboundController) GetChartOutbounds(c fiber.Ctx) error {
 	if err := oc.DB.Model(&models.Outbound{}).Select("DATE(created_at) as date, COUNT(*) as count").Where("created_at >= ? AND created_at < ?", startOfMonth, startOfNextMonth).Group("DATE(created_at)").Order("date ASC").Scan(&dailyCounts).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve Outbound data",
+			Error:   "Gagal mengambil data outbound",
 		})
 	}
 
@@ -463,7 +463,7 @@ func (oc *OutboundController) GetChartOutbounds(c fiber.Ctx) error {
 	if err := oc.DB.Model(&models.Outbound{}).Where("created_at >= ? AND created_at < ?", startOfMonth, startOfNextMonth).Count(&totalCount).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve total Outbound count",
+			Error:   "Gagal mengambil total jumlah outbound gagal",
 		})
 	}
 

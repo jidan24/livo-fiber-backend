@@ -72,7 +72,7 @@ func (bc *ChannelController) GetChannels(c fiber.Ctx) error {
 		log.Println("Error retrieving channels:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve channels",
+			Error:   "Gagal mengambil data channel",
 		})
 	}
 
@@ -130,14 +130,14 @@ func (bc *ChannelController) GetChannel(c fiber.Ctx) error {
 		log.Println("Channel with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Channel with id " + id + " not found.",
+			Error:   "Channel dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("Channel retrieved successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Channel retrieved successfully",
+		Message: "Data channel berhasil diambil",
 		Data:    channel.ToResponse(),
 	})
 }
@@ -163,7 +163,7 @@ func (bc *ChannelController) CreateChannel(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -176,7 +176,7 @@ func (bc *ChannelController) CreateChannel(c fiber.Ctx) error {
 		log.Println("Channel with code " + req.ChannelCode + " already exists.")
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Channel with code " + req.ChannelCode + " already exists.",
+			Error:   "Channel dengan code " + req.ChannelCode + " sudah terdaftar.",
 		})
 	}
 
@@ -190,14 +190,14 @@ func (bc *ChannelController) CreateChannel(c fiber.Ctx) error {
 		log.Println("Failed to create channel:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create channel",
+			Error:   "Gagal membuat channel",
 		})
 	}
 
 	log.Println("Channel created successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Channel created successfully",
+		Message: "Channel berhasil dibuat",
 		Data:    newChannel.ToResponse(),
 	})
 }
@@ -225,7 +225,7 @@ func (bc *ChannelController) UpdateChannel(c fiber.Ctx) error {
 		log.Println("Channel with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Channel with id " + id + " not found.",
+			Error:   "Channel dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -235,7 +235,7 @@ func (bc *ChannelController) UpdateChannel(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -248,7 +248,7 @@ func (bc *ChannelController) UpdateChannel(c fiber.Ctx) error {
 		log.Println("Channel with code " + req.ChannelCode + " already exists.")
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Channel with code " + req.ChannelCode + " already exists.",
+			Error:   "Channel dengan code " + req.ChannelCode + " sudah terdaftar.",
 		})
 	}
 
@@ -260,14 +260,14 @@ func (bc *ChannelController) UpdateChannel(c fiber.Ctx) error {
 		log.Println("Failed to update channel:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update channel",
+			Error:   "Gagal memperbarui channel",
 		})
 	}
 
 	log.Println("Channel updated successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Channel updated successfully",
+		Message: "Channel berhasil diperbarui",
 		Data:    channel.ToResponse(),
 	})
 }
@@ -294,7 +294,7 @@ func (bc *ChannelController) DeleteChannel(c fiber.Ctx) error {
 		log.Println("Channel with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Channel with id " + id + " not found.",
+			Error:   "Channel dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -303,13 +303,13 @@ func (bc *ChannelController) DeleteChannel(c fiber.Ctx) error {
 		log.Println("Failed to delete channel:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to delete channel",
+			Error:   "Gagal menghapus channel",
 		})
 	}
 
 	log.Println("Channel deleted successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Channel deleted successfully",
+		Message: "Berhasil menghapus channel",
 	})
 }

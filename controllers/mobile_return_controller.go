@@ -127,14 +127,14 @@ func (mrc *MobileReturnController) GetMobileReturn(c fiber.Ctx) error {
 		log.Println("Mobile Return with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Mobile Return with id " + id + " not found.",
+			Error:   "Mobile Return dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("Mobile Return retrieved successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Mobile Return retrieved successfully",
+		Message: "Data mobile return berhasil diambil",
 		Data:    mobileReturn.ToResponse(),
 	})
 }
@@ -158,7 +158,7 @@ func (mrc *MobileReturnController) CreateMobileReturn(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -168,7 +168,7 @@ func (mrc *MobileReturnController) CreateMobileReturn(c fiber.Ctx) error {
 		log.Println("Return with new tracking number " + req.NewTrackingNumber + " already exists.")
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Return with new tracking number " + req.NewTrackingNumber + " already exists.",
+			Error:   "Return dengan nomor pelacak baru " + req.NewTrackingNumber + " sudah terdaftar.",
 		})
 	}
 
@@ -184,7 +184,7 @@ func (mrc *MobileReturnController) CreateMobileReturn(c fiber.Ctx) error {
 		log.Println("Failed to create mobile return:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create mobile return",
+			Error:   "Gagal membuat  mobile return",
 		})
 	}
 
@@ -193,14 +193,14 @@ func (mrc *MobileReturnController) CreateMobileReturn(c fiber.Ctx) error {
 		log.Println("Failed to retrieve created mobile return:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve created mobile return",
+			Error:   "Gagal mengambil data mobile return yang baru dibuat",
 		})
 	}
 
 	log.Println("Mobile Return created successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Mobile Return created successfully",
+		Message: "Mobile return berhasil dibuat",
 		Data:    mobileReturn.ToMobileResponse(),
 	})
 }

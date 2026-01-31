@@ -86,7 +86,7 @@ func (moc *MobileOrderController) GetMyPickingOrders(c fiber.Ctx) error {
 		log.Println("GetMyPickingOrders - Invalid user ID:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -118,7 +118,7 @@ func (moc *MobileOrderController) GetMyPickingOrders(c fiber.Ctx) error {
 	log.Println("GetMyPickingOrders completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessTotaledResponse{
 		Success: true,
-		Message: "Picking orders retrieved successfully",
+		Message: "Data picking order berhasil diambil",
 		Data:    orderResponses,
 		Total:   total,
 	})
@@ -146,7 +146,7 @@ func (moc *MobileOrderController) GetMyPickingOrder(c fiber.Ctx) error {
 		log.Println("GetMyPickingOrder - Invalid user ID:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -159,7 +159,7 @@ func (moc *MobileOrderController) GetMyPickingOrder(c fiber.Ctx) error {
 		log.Println("GetMyPickingOrder - Order not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order not found",
+			Error:   "Pesanan tidak ditemukan",
 		})
 	}
 
@@ -174,7 +174,7 @@ func (moc *MobileOrderController) GetMyPickingOrder(c fiber.Ctx) error {
 	log.Println("GetMyPickingOrder completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order retrieved successfully",
+		Message: "Pesanan berhasil diambil",
 		Data:    order.ToOrderResponse(),
 	})
 }
@@ -201,7 +201,7 @@ func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 		log.Println("CompletePickingOrder - Invalid user ID:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -212,7 +212,7 @@ func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 		log.Println("CompletePickingOrder - Order not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with id " + id + " not found.",
+			Error:   "Pesan dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -247,7 +247,7 @@ func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order status: " + err.Error(),
+			Error:   "Gagal memperbarui status pesanan: " + err.Error(),
 		})
 	}
 
@@ -262,7 +262,7 @@ func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create picked order log: " + err.Error(),
+			Error:   "Gagal membuat log picking order: " + err.Error(),
 		})
 	}
 
@@ -271,7 +271,7 @@ func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 		log.Println("CompletePickingOrder - Failed to commit transaction:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to commit transaction: " + err.Error(),
+			Error:   "Gagal melakukan commit transaksi: " + err.Error(),
 		})
 	}
 
@@ -281,7 +281,7 @@ func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 		log.Println("CompletePickingOrder - Failed to reload order data:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to reload order data: " + err.Error(),
+			Error:   "Gagal memuat ulang data pesanan: " + err.Error(),
 		})
 	}
 
@@ -296,7 +296,7 @@ func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 	log.Println("CompletePickingOrder completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order marked as picked successfully",
+		Message: "Pesanan berhasil ditandai sebagai picked",
 		Data:    order.ToOrderResponse(),
 	})
 }
@@ -324,7 +324,7 @@ func (moc *MobileOrderController) PendingPickOrder(c fiber.Ctx) error {
 		log.Println("PendingPickOrder - Order not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with id " + id + " not found.",
+			Error:   "Pesanan dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -334,7 +334,7 @@ func (moc *MobileOrderController) PendingPickOrder(c fiber.Ctx) error {
 		log.Println("PendingPickOrder - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -343,7 +343,7 @@ func (moc *MobileOrderController) PendingPickOrder(c fiber.Ctx) error {
 		log.Println("PendingPickOrder - Order not in picking progress status")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order not in picking progress status",
+			Error:   "Pesanan tidak dalam status poses picking",
 		})
 	}
 
@@ -353,7 +353,7 @@ func (moc *MobileOrderController) PendingPickOrder(c fiber.Ctx) error {
 		log.Println("PendingPickOrder - Invalid coordinator credentials:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid coordinator credentials",
+			Error:   "Kredensial koordinator tidak valid",
 		})
 	}
 
@@ -362,7 +362,7 @@ func (moc *MobileOrderController) PendingPickOrder(c fiber.Ctx) error {
 		log.Println("PendingPickOrder - Invalid coordinator password")
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid coordinator credentials",
+			Error:   "Kredensial koordinator tidak valid",
 		})
 	}
 
@@ -379,7 +379,7 @@ func (moc *MobileOrderController) PendingPickOrder(c fiber.Ctx) error {
 		log.Println("PendingPickOrder - User does not have required permissions")
 		return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User does not have required permissions",
+			Error:   "Pengguna tidak memiliki izin yang diperlukan",
 		})
 	}
 
@@ -396,7 +396,7 @@ func (moc *MobileOrderController) PendingPickOrder(c fiber.Ctx) error {
 		log.Println("PendingPickOrder - Failed to update order status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order status: " + err.Error(),
+			Error:   "Gagal memperbarui status pesanan: " + err.Error(),
 		})
 	}
 
@@ -406,7 +406,7 @@ func (moc *MobileOrderController) PendingPickOrder(c fiber.Ctx) error {
 		log.Println("PendingPickOrder - Failed to reload order data:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to reload order data: " + err.Error(),
+			Error:   "Gagal memuat ulang data pesanan: " + err.Error(),
 		})
 	}
 
@@ -421,7 +421,7 @@ func (moc *MobileOrderController) PendingPickOrder(c fiber.Ctx) error {
 	log.Println("PendingPickOrder completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Order marked as pending pick successfully",
+		Message: "Pesanan berhasil ditandai sebagai pending pick",
 		Data:    order.ToOrderResponse(),
 	})
 }
@@ -447,7 +447,7 @@ func (moc *MobileOrderController) BulkAssignPicker(c fiber.Ctx) error {
 		log.Println("BulkAssignPicker - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -458,7 +458,7 @@ func (moc *MobileOrderController) BulkAssignPicker(c fiber.Ctx) error {
 		log.Println("BulkAssignPicker - Invalid user ID:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -468,7 +468,7 @@ func (moc *MobileOrderController) BulkAssignPicker(c fiber.Ctx) error {
 		log.Println("BulkAssignPicker - Picker not found:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Picker with ID " + strconv.FormatUint(uint64(req.PickerID), 10) + " not found",
+			Error:   "Picker dengan ID " + strconv.FormatUint(uint64(req.PickerID), 10) + " tidak ditemukan",
 		})
 	}
 
@@ -618,7 +618,7 @@ func (moc *MobileOrderController) GetMobilePickedOrders(c fiber.Ctx) error {
 		log.Println("GetMobilePickedOrders - Invalid user ID:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -648,7 +648,7 @@ func (moc *MobileOrderController) GetMobilePickedOrders(c fiber.Ctx) error {
 		log.Println("GetMobilePickedOrders - Failed to retrieve picked orders:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve picked orders",
+			Error:   "Gagal mengambil data picked order",
 		})
 	}
 
@@ -715,7 +715,7 @@ func (moc *MobileOrderController) GetMobilePickedOrder(c fiber.Ctx) error {
 		log.Println("GetMobilePickedOrder - Picked order not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Picked order with id " + id + " not found.",
+			Error:   "Picked order dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -730,7 +730,7 @@ func (moc *MobileOrderController) GetMobilePickedOrder(c fiber.Ctx) error {
 	log.Println("GetMobilePickedOrder completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Picked order retrieved successfully",
+		Message: "Data picked order berhasil diambil",
 		Data:    pickedOrder.ToOrderResponse(),
 	})
 }

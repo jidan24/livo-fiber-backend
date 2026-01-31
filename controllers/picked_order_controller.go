@@ -59,7 +59,7 @@ func (poc *PickedOrderController) GetPickedOrders(c fiber.Ctx) error {
 			log.Println("Invalid start_date format:", err)
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid start_date format. Use YYYY-MM-DD.",
+				Error:   "Format start_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		startOfDay := time.Date(parsedStartDate.Year(), parsedStartDate.Month(), parsedStartDate.Day(), 0, 0, 0, 0, parsedStartDate.Location())
@@ -72,7 +72,7 @@ func (poc *PickedOrderController) GetPickedOrders(c fiber.Ctx) error {
 			log.Println("Invalid end_date format:", err)
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid end_date format. Use YYYY-MM-DD.",
+				Error:   "Format end_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		endOfDay := time.Date(parsedEndDate.Year(), parsedEndDate.Month(), parsedEndDate.Day(), 23, 59, 59, 0, parsedEndDate.Location())
@@ -94,7 +94,7 @@ func (poc *PickedOrderController) GetPickedOrders(c fiber.Ctx) error {
 		log.Println("Error retrieving picked orders:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve picked orders.",
+			Error:   "Gagal mengambil data pesanan yang sudah dipick.",
 		})
 	}
 
@@ -163,14 +163,14 @@ func (poc *PickedOrderController) GetPickedOrder(c fiber.Ctx) error {
 		log.Println("Picked order with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Picked order with id " + id + " not found.",
+			Error:   "Pesanan yang dipick dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("Picked order retrieved successfully.")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Picked order retrieved successfully.",
+		Message: "Pesanan yang sudah dipick berhasil diambil.",
 		Data:    pickedOrder.ToResponse(),
 	})
 }

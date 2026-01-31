@@ -73,7 +73,7 @@ func (lfc *LostFoundController) GetLostfounds(c fiber.Ctx) error {
 		log.Println("Error retrieving lost and found records:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve lost and found records",
+			Error:   "Gagal mengambil data barang hilang dan ditemukan",
 		})
 	}
 
@@ -139,14 +139,14 @@ func (lfc *LostFoundController) GetLostfound(c fiber.Ctx) error {
 		log.Println("Lost and found record with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Lost and found record with id " + id + " not found.",
+			Error:   "Data barang hilang dan ditemukan dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("Lost and found record retrieved successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Lost and found record retrieved successfully",
+		Message: "Data barang hilang dan ditemukan berhasil diambil",
 		Data:    lostFound.ToResponse(),
 	})
 }
@@ -171,7 +171,7 @@ func (lfc *LostFoundController) CreateLostfound(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -185,7 +185,7 @@ func (lfc *LostFoundController) CreateLostfound(c fiber.Ctx) error {
 		log.Println("Invalid user ID:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -195,7 +195,7 @@ func (lfc *LostFoundController) CreateLostfound(c fiber.Ctx) error {
 		log.Println("Product with SKU " + req.ProductSKU + " does not exist.")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Product with SKU " + req.ProductSKU + " does not exist.",
+			Error:   "Produk dengan SKU " + req.ProductSKU + " tidak ditemukan.",
 		})
 	}
 
@@ -211,7 +211,7 @@ func (lfc *LostFoundController) CreateLostfound(c fiber.Ctx) error {
 		log.Println("Failed to create lost and found:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create lost and found",
+			Error:   "Gagal membuat data barang hilang dan ditemukan",
 		})
 	}
 
@@ -223,7 +223,7 @@ func (lfc *LostFoundController) CreateLostfound(c fiber.Ctx) error {
 	log.Println("Lost and found created successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Lost and found created successfully",
+		Message: "Data barang hilang dan ditemukan berhasil dibuat",
 		Data:    newLostFound.ToResponse(),
 	})
 }
@@ -251,7 +251,7 @@ func (lfc *LostFoundController) UpdateLostfound(c fiber.Ctx) error {
 		log.Println("Lost and found record with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Lost and found record with id " + id + " not found.",
+			Error:   "Data barang hilang dan ditemukan dengan ID " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -261,7 +261,7 @@ func (lfc *LostFoundController) UpdateLostfound(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -273,7 +273,7 @@ func (lfc *LostFoundController) UpdateLostfound(c fiber.Ctx) error {
 		log.Println("Failed to update lost and found:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update lost and found",
+			Error:   "Gagal memperbarui data barang hilang dan ditemukan",
 		})
 	}
 
@@ -286,7 +286,7 @@ func (lfc *LostFoundController) UpdateLostfound(c fiber.Ctx) error {
 	log.Println("Lost and found updated successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Lost and found updated successfully",
+		Message: "Data barang hilang dan ditemukan berhasil diperbarui",
 		Data:    lostFound.ToResponse(),
 	})
 }
@@ -313,7 +313,7 @@ func (lfc *LostFoundController) DeleteLostfound(c fiber.Ctx) error {
 		log.Println("Lost and found record with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Lost and found record with id " + id + " not found.",
+			Error:   "Data barang hilang dan ditemukan dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -322,13 +322,13 @@ func (lfc *LostFoundController) DeleteLostfound(c fiber.Ctx) error {
 		log.Println("Failed to delete lost and found:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to delete lost and found",
+			Error:   "Gagal menghapus data barang hilang dan ditemukan",
 		})
 	}
 
 	log.Println("Lost and found deleted successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Lost and found deleted successfully",
+		Message: "Data barang hilang dan ditemukan berhasil dihapus",
 	})
 }

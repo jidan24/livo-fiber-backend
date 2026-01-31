@@ -72,7 +72,7 @@ func (bc *BoxController) GetBoxes(c fiber.Ctx) error {
 		log.Println("Error retrieving boxes:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve boxes",
+			Error:   "Gagal mengambil data box",
 		})
 	}
 
@@ -130,14 +130,14 @@ func (bc *BoxController) GetBox(c fiber.Ctx) error {
 		log.Println("Box with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Box with id " + id + " not found.",
+			Error:   "Box dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("Box retrieved successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Box retrieved successfully",
+		Message: "Data box berhasil diambil",
 		Data:    box.ToResponse(),
 	})
 }
@@ -163,7 +163,7 @@ func (bc *BoxController) CreateBox(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -176,7 +176,7 @@ func (bc *BoxController) CreateBox(c fiber.Ctx) error {
 		log.Println("Box with code " + req.BoxCode + " already exists.")
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Box with code " + req.BoxCode + " already exists.",
+			Error:   "Box dengan code " + req.BoxCode + " sudah terdaftar.",
 		})
 	}
 
@@ -190,14 +190,14 @@ func (bc *BoxController) CreateBox(c fiber.Ctx) error {
 		log.Println("Failed to create box:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create box",
+			Error:   "Gagal membuat box",
 		})
 	}
 
 	log.Println("Box created successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Box created successfully",
+		Message: "Box berhasil dibuat",
 		Data:    newBox.ToResponse(),
 	})
 }
@@ -225,7 +225,7 @@ func (bc *BoxController) UpdateBox(c fiber.Ctx) error {
 		log.Println("Box with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Box with id " + id + " not found.",
+			Error:   "Box dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -235,7 +235,7 @@ func (bc *BoxController) UpdateBox(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -248,7 +248,7 @@ func (bc *BoxController) UpdateBox(c fiber.Ctx) error {
 		log.Println("Box with code " + req.BoxCode + " already exists.")
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Box with code " + req.BoxCode + " already exists.",
+			Error:   "Box dengan code " + req.BoxCode + " sudah terdaftar.",
 		})
 	}
 
@@ -260,14 +260,14 @@ func (bc *BoxController) UpdateBox(c fiber.Ctx) error {
 		log.Println("Failed to update box:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update box",
+			Error:   "Gagal memperbarui box",
 		})
 	}
 
 	log.Println("Box updated successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Box updated successfully",
+		Message: "Box berhasil diperbarui.",
 		Data:    box.ToResponse(),
 	})
 }
@@ -294,7 +294,7 @@ func (bc *BoxController) DeleteBox(c fiber.Ctx) error {
 		log.Println("Box with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Box with id " + id + " not found.",
+			Error:   "Box dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -303,13 +303,13 @@ func (bc *BoxController) DeleteBox(c fiber.Ctx) error {
 		log.Println("Failed to delete box:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to delete box",
+			Error:   "Gagal menghapus box",
 		})
 	}
 
 	log.Println("Box deleted successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Box deleted successfully",
+		Message: "Box berhasil dihapus",
 	})
 }

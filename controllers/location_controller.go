@@ -71,7 +71,7 @@ func (lc *LocationController) GetLocations(c fiber.Ctx) error {
 		log.Println("Error retrieving locations:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve locations",
+			Error:   "Gagal mengambil data lokasi",
 		})
 	}
 
@@ -128,14 +128,14 @@ func (lc *LocationController) GetLocation(c fiber.Ctx) error {
 		log.Println("Location not found")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Location not found",
+			Error:   "Lokasi tidak ditemukan",
 		})
 	}
 
 	log.Println("Location retrieved successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Location retrieved successfully",
+		Message: "Data lokasi berhasil diambil",
 		Data:    location.ToResponse(),
 	})
 }
@@ -159,7 +159,7 @@ func (lc *LocationController) CreateLocation(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -169,7 +169,7 @@ func (lc *LocationController) CreateLocation(c fiber.Ctx) error {
 		log.Println("Location with the same name already exists")
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Location with the same name already exists",
+			Error:   "Lokasi dengan nama yang sama sudah terdaftar",
 		})
 	}
 
@@ -184,14 +184,14 @@ func (lc *LocationController) CreateLocation(c fiber.Ctx) error {
 		log.Println("Failed to create location:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create location",
+			Error:   "Gagal membuat lokasi",
 		})
 	}
 
 	log.Println("Location created successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Location created successfully",
+		Message: "Lokasi berhasil dibuat",
 		Data:    location.ToResponse(),
 	})
 }
@@ -218,7 +218,7 @@ func (lc *LocationController) UpdateLocation(c fiber.Ctx) error {
 		log.Println("Location not found")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Location not found",
+			Error:   "Lokasi tidak ditemukan",
 		})
 	}
 
@@ -228,7 +228,7 @@ func (lc *LocationController) UpdateLocation(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -240,14 +240,14 @@ func (lc *LocationController) UpdateLocation(c fiber.Ctx) error {
 		log.Println("Failed to update location:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update location",
+			Error:   "Gagal memperbarui lokasi",
 		})
 	}
 
 	log.Println("Location updated successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Location updated successfully",
+		Message: "Berhasil memperbarui lokasi",
 		Data:    location.ToResponse(),
 	})
 }
@@ -273,7 +273,7 @@ func (lc *LocationController) DeleteLocation(c fiber.Ctx) error {
 		log.Println("Location not found")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Location not found",
+			Error:   "Lokasi tidak ditemukan",
 		})
 	}
 
@@ -281,14 +281,14 @@ func (lc *LocationController) DeleteLocation(c fiber.Ctx) error {
 		log.Println("Failed to delete location:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to delete location",
+			Error:   "Gagal menghapus lokasi",
 		})
 	}
 
 	log.Println("Location deleted successfully")
 	return c.Status(fiber.StatusNoContent).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Location deleted successfully",
+		Message: "Lokasi berhasil dihapus",
 		Data:    nil,
 	})
 }

@@ -259,7 +259,7 @@ func (ofc *OnlineFlowController) GetOnlineFlows(c fiber.Ctx) error {
 			log.Println("Invalid start_date format:", err)
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid start_date format. Use YYYY-MM-DD.",
+				Error:   "Format start_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		startOfDay := time.Date(parsedStartDate.Year(), parsedStartDate.Month(), parsedStartDate.Day(), 0, 0, 0, 0, parsedStartDate.Location())
@@ -272,7 +272,7 @@ func (ofc *OnlineFlowController) GetOnlineFlows(c fiber.Ctx) error {
 			log.Println("Invalid end_date format:", err)
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid end_date format. Use YYYY-MM-DD.",
+				Error:   "Format end_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		endOfDay := time.Date(parsedEndDate.Year(), parsedEndDate.Month(), parsedEndDate.Day(), 23, 59, 59, 0, parsedEndDate.Location())
@@ -294,7 +294,7 @@ func (ofc *OnlineFlowController) GetOnlineFlows(c fiber.Ctx) error {
 		log.Println("Error retrieving online flows:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve online flows",
+			Error:   "Gagal mengambil data online flows",
 		})
 	}
 
@@ -367,7 +367,7 @@ func (ofc *OnlineFlowController) GetOnlineFlow(c fiber.Ctx) error {
 		log.Println("Tracking number is required")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Tracking number is required",
+			Error:   "Nomor pelacakan wajib diisi",
 		})
 	}
 
@@ -378,14 +378,14 @@ func (ofc *OnlineFlowController) GetOnlineFlow(c fiber.Ctx) error {
 		log.Println("No QC Online found with tracking number:", trackingNumber)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "No QC Online found with the provided tracking number",
+			Error:   "Tidak ditemukan QC Online dengan nomor pelacakan yang diberikan",
 		})
 	}
 
 	log.Println("Online flow retrieved successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Online flow retrieved successfully",
+		Message: "Data online flow berhasil diambil",
 		Data:    flow,
 	})
 }

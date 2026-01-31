@@ -88,7 +88,7 @@ func (ac *AttendanceController) SearchUsersByFace(c fiber.Ctx) error {
 		log.Println("Image file is required")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Image file is required",
+			Error:   "File gambar diperlukan",
 		})
 	}
 
@@ -97,7 +97,7 @@ func (ac *AttendanceController) SearchUsersByFace(c fiber.Ctx) error {
 		log.Println("Invalid image file type")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid image file type",
+			Error:   "Tipe file gambar tidak valid",
 		})
 	}
 
@@ -106,7 +106,7 @@ func (ac *AttendanceController) SearchUsersByFace(c fiber.Ctx) error {
 		log.Println("Failed to save image file:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to save image file",
+			Error:   "Gagal menyimpan file gambar",
 		})
 	}
 	defer os.Remove(tmpPath)
@@ -116,7 +116,7 @@ func (ac *AttendanceController) SearchUsersByFace(c fiber.Ctx) error {
 		log.Println("Face search failed:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("Face search failed: %v", err),
+			Error:   fmt.Sprintf("Pencarian wajah gagal: %v", err),
 		})
 	}
 
@@ -124,7 +124,7 @@ func (ac *AttendanceController) SearchUsersByFace(c fiber.Ctx) error {
 		log.Println("Face not recognized")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Face not recognized",
+			Error:   "Wajah tidak dikenali",
 		})
 	}
 
@@ -134,7 +134,7 @@ func (ac *AttendanceController) SearchUsersByFace(c fiber.Ctx) error {
 		log.Println("User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User not found",
+			Error:   "Pengguna tidak ditemukan",
 		})
 	}
 
@@ -164,7 +164,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 		log.Println("Image file is required")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Image file is required",
+			Error:   "File gambar diperlukan",
 		})
 	}
 
@@ -173,7 +173,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 		log.Println("Invalid image file type")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid image file type",
+			Error:   "Tipe file gambar tidak valid",
 		})
 	}
 
@@ -182,7 +182,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 		log.Println("Failed to save image file:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to save image file",
+			Error:   "Gagal menyimpan gambar",
 		})
 	}
 	defer os.Remove(tmpPath)
@@ -192,7 +192,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 		log.Println("Face search failed:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("Face search failed: %v", err),
+			Error:   fmt.Sprintf("Pencarian wajah gagal: %v", err),
 		})
 	}
 
@@ -200,7 +200,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 		log.Println("Face not recognized")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Face not recognized",
+			Error:   "Wajah tidak dikenali",
 		})
 	}
 
@@ -210,7 +210,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 		log.Println("User not found")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User not found",
+			Error:   "Pengguna tidak ditemukan",
 		})
 	}
 
@@ -224,7 +224,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 		log.Println("User already checked in today")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User already checked in today",
+			Error:   "Pengguna sudah melakukan check-in hari ini",
 		})
 	}
 
@@ -254,7 +254,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 			log.Println("Check-in time has expired for fullday shift. Deadline was", fulldayCheckInEnd.Format("15:04"))
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   fmt.Sprintf("Check-in time has expired for fullday shift. Deadline was %s", fulldayCheckInEnd.Format("15:04")),
+				Error:   fmt.Sprintf("Waktu check-in untuk shift seharian penuh telah berakhir. Batas waktunya adalah %s", fulldayCheckInEnd.Format("15:04")),
 			})
 		}
 
@@ -270,7 +270,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 			log.Println("Check-in time has expired for halfday shift. Deadline was", halfdayCheckInEnd.Format("15:04"))
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   fmt.Sprintf("Check-in time has expired for halfday shift. Deadline was %s", halfdayCheckInEnd.Format("15:04")),
+				Error:   fmt.Sprintf("Waktu check-in untuk shift setengah hari telah berakhir. Batas waktunya adalah %s", halfdayCheckInEnd.Format("15:04")),
 			})
 		}
 
@@ -283,7 +283,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 			"Halfday:", halfdayCheckInStart.Format("15:04"), "-", halfdayCheckInEnd.Format("15:04"))
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error: fmt.Sprintf("Not within valid check-in time. Fullday: %s-%s, Halfday: %s-%s",
+			Error: fmt.Sprintf("Tidak dalam waktu check-in yang valid. Seharian penuh: %s-%s, Setengah hari: %s-%s",
 				fulldayCheckInStart.Format("15:04"), fulldayCheckInEnd.Format("15:04"),
 				halfdayCheckInStart.Format("15:04"), halfdayCheckInEnd.Format("15:04")),
 		})
@@ -306,7 +306,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 		log.Println("Failed to create attendance record:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create attendance record",
+			Error:   "Gagal membuat catatan kehadiran",
 		})
 	}
 
@@ -316,7 +316,7 @@ func (ac *AttendanceController) CheckInUserByFace(c fiber.Ctx) error {
 	log.Println("User checked in successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User checked in successfully",
+		Message: "Pengguna berhasil check-in",
 		Data: CheckInResponse{
 			Matched:    true,
 			UserID:     result.UserID,
@@ -346,7 +346,7 @@ func (ac *AttendanceController) CheckOutUserByFace(c fiber.Ctx) error {
 		log.Println("Image file is required")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Image file is required",
+			Error:   "File gambar diperlukan",
 		})
 	}
 
@@ -355,7 +355,7 @@ func (ac *AttendanceController) CheckOutUserByFace(c fiber.Ctx) error {
 		log.Println("Invalid image file type")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid image file type",
+			Error:   "Tipe file gambar tidak valid",
 		})
 	}
 
@@ -364,7 +364,7 @@ func (ac *AttendanceController) CheckOutUserByFace(c fiber.Ctx) error {
 		log.Println("Failed to save image file:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to save image file",
+			Error:   "Gagal menyimpan file gambar",
 		})
 	}
 	defer os.Remove(tmpPath)
@@ -374,7 +374,7 @@ func (ac *AttendanceController) CheckOutUserByFace(c fiber.Ctx) error {
 		log.Println("Face search failed:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("Face search failed: %v", err),
+			Error:   fmt.Sprintf("Pencarian wajah gagal: %v", err),
 		})
 	}
 
@@ -382,7 +382,7 @@ func (ac *AttendanceController) CheckOutUserByFace(c fiber.Ctx) error {
 		log.Println("Face not recognized")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Face not recognized",
+			Error:   "Wajah tidak dikenali",
 		})
 	}
 
@@ -392,7 +392,7 @@ func (ac *AttendanceController) CheckOutUserByFace(c fiber.Ctx) error {
 		log.Println("User not found")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User not found",
+			Error:   "Pengguna tidak ditemukan",
 		})
 	}
 
@@ -405,7 +405,7 @@ func (ac *AttendanceController) CheckOutUserByFace(c fiber.Ctx) error {
 		log.Println("Attendance record not found or user has not checked in today")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Attendance record not found or user has not checked in today",
+			Error:   "Catatan kehadiran tidak ditemukan atau pengguna belum melakukan check-in hari ini",
 		})
 	}
 
@@ -452,7 +452,7 @@ func (ac *AttendanceController) CheckOutUserByFace(c fiber.Ctx) error {
 			"Regular checkout:", regularCheckOutStart.Format("15:04"), "onwards")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error: fmt.Sprintf("Not within valid check-out time. Early checkout: %s-%s, Regular checkout: %s onwards",
+			Error: fmt.Sprintf("Tidak dalam jangka waktu check-out yang valid. Pembayaran lebih awal: %s-%s, Pembayaran regular: %s onwards",
 				earlyCheckOut.Format("15:04"), earlyCheckOutEnd.Format("15:04"),
 				regularCheckOutStart.Format("15:04")),
 		})
@@ -463,7 +463,7 @@ func (ac *AttendanceController) CheckOutUserByFace(c fiber.Ctx) error {
 		log.Println("Failed to update attendance record:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update attendance record",
+			Error:   "Gagal memperbarui catatan kehadiran.",
 		})
 	}
 
@@ -473,7 +473,7 @@ func (ac *AttendanceController) CheckOutUserByFace(c fiber.Ctx) error {
 	log.Println("User checked out successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User checked out successfully",
+		Message: "Pengguna berhasil check out",
 		Data: CheckOutResponse{
 			Matched:    true,
 			UserID:     result.UserID,
@@ -504,7 +504,7 @@ func (ac *AttendanceController) CheckInUserManual(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -514,7 +514,7 @@ func (ac *AttendanceController) CheckInUserManual(c fiber.Ctx) error {
 		log.Println("User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User not found",
+			Error:   "Pengguna tidak ditemukan",
 		})
 	}
 
@@ -523,7 +523,7 @@ func (ac *AttendanceController) CheckInUserManual(c fiber.Ctx) error {
 		log.Println("Invalid password")
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid password",
+			Error:   "Kata sandi tidak valid",
 		})
 	}
 
@@ -538,7 +538,7 @@ func (ac *AttendanceController) CheckInUserManual(c fiber.Ctx) error {
 		log.Println("User already checked in today")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User already checked in today",
+			Error:   "Pengguna sudah melakukan check-in hari ini.",
 		})
 	}
 
@@ -568,7 +568,7 @@ func (ac *AttendanceController) CheckInUserManual(c fiber.Ctx) error {
 			log.Println("Check-in time has expired for fullday shift. Deadline was", fulldayCheckInEnd.Format("15:04"))
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   fmt.Sprintf("Check-in time has expired for fullday shift. Deadline was %s", fulldayCheckInEnd.Format("15:04")),
+				Error:   fmt.Sprintf("Waktu check-in untuk shift seharian penuh telah berakhir. Batas waktunya adalah %s", fulldayCheckInEnd.Format("15:04")),
 			})
 		}
 
@@ -584,7 +584,7 @@ func (ac *AttendanceController) CheckInUserManual(c fiber.Ctx) error {
 			log.Println("Check-in time has expired for halfday shift. Deadline was", halfdayCheckInEnd.Format("15:04"))
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   fmt.Sprintf("Check-in time has expired for halfday shift. Deadline was %s", halfdayCheckInEnd.Format("15:04")),
+				Error:   fmt.Sprintf("Waktunya check-in untuk shift setengah hari telah berakhir. Batas waktunya adalah %s", halfdayCheckInEnd.Format("15:04")),
 			})
 		}
 
@@ -597,7 +597,7 @@ func (ac *AttendanceController) CheckInUserManual(c fiber.Ctx) error {
 			"Halfday:", halfdayCheckInStart.Format("15:04"), "-", halfdayCheckInEnd.Format("15:04"))
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error: fmt.Sprintf("Not within valid check-in time. Fullday: %s-%s, Halfday: %s-%s",
+			Error: fmt.Sprintf("Tidak dalam waktu check-in yang valid. Sehari penuh: %s-%s, Setengah hari: %s-%s",
 				fulldayCheckInStart.Format("15:04"), fulldayCheckInEnd.Format("15:04"),
 				halfdayCheckInStart.Format("15:04"), halfdayCheckInEnd.Format("15:04")),
 		})
@@ -620,7 +620,7 @@ func (ac *AttendanceController) CheckInUserManual(c fiber.Ctx) error {
 		log.Println("Failed to create attendance record:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create attendance record",
+			Error:   "Gagal membuat catatan kehadiran",
 		})
 	}
 
@@ -630,7 +630,7 @@ func (ac *AttendanceController) CheckInUserManual(c fiber.Ctx) error {
 	log.Println("User checked in successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User checked in successfully",
+		Message: "Pengguna berhasil check-in",
 		Data: CheckInManualResponse{
 			Matched:    true,
 			User:       user.ToResponse(),
@@ -659,7 +659,7 @@ func (ac *AttendanceController) CheckOutUserManual(c fiber.Ctx) error {
 		log.Println("Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -669,7 +669,7 @@ func (ac *AttendanceController) CheckOutUserManual(c fiber.Ctx) error {
 		log.Println("User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User not found",
+			Error:   "Pengguna tidak ditemukan",
 		})
 	}
 
@@ -678,7 +678,7 @@ func (ac *AttendanceController) CheckOutUserManual(c fiber.Ctx) error {
 		log.Println("Invalid password")
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid password",
+			Error:   "Kata sandi tidak valid",
 		})
 	}
 
@@ -692,7 +692,7 @@ func (ac *AttendanceController) CheckOutUserManual(c fiber.Ctx) error {
 		log.Println("Attendance record not found or user has not checked in today")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Attendance record not found or user has not checked in today",
+			Error:   "Catatan kehadiran tidak ditemukan atau pengguna belum melakukan check-in hari ini",
 		})
 	}
 
@@ -739,7 +739,7 @@ func (ac *AttendanceController) CheckOutUserManual(c fiber.Ctx) error {
 			"Regular checkout:", regularCheckOutStart.Format("15:04"), "onwards")
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error: fmt.Sprintf("Not within valid check-out time. Early checkout: %s-%s, Regular checkout: %s onwards",
+			Error: fmt.Sprintf("Tidak berada dalam waktu check-out yang valid. Check-out lebih awal: %s-%s, Check-out regular: %s Mulai pukul",
 				earlyCheckOut.Format("15:04"), earlyCheckOutEnd.Format("15:04"),
 				regularCheckOutStart.Format("15:04")),
 		})
@@ -750,7 +750,7 @@ func (ac *AttendanceController) CheckOutUserManual(c fiber.Ctx) error {
 		log.Println("Failed to update attendance record:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update attendance record",
+			Error:   "Pembaruan data kehadiran gagal",
 		})
 	}
 
@@ -760,7 +760,7 @@ func (ac *AttendanceController) CheckOutUserManual(c fiber.Ctx) error {
 	log.Println("User checked out successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User checked out successfully",
+		Message: "Check-out pengguna berhasil",
 		Data: CheckOutManualResponse{
 			Matched:    true,
 			User:       user.ToResponse(),
@@ -808,7 +808,7 @@ func (ac *AttendanceController) GetAttendances(c fiber.Ctx) error {
 			log.Println("Invalid start_date format. Use YYYY-MM-DD.")
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid start_date format. Use YYYY-MM-DD.",
+				Error:   "Format start_date tidak sesuai dengan ketentuan. Gunakan format YYYY-MM-DD.",
 			})
 		}
 		startOfDay := time.Date(parsedStartDate.Year(), parsedStartDate.Month(), parsedStartDate.Day(), 0, 0, 0, 0, parsedStartDate.Location())
@@ -821,7 +821,7 @@ func (ac *AttendanceController) GetAttendances(c fiber.Ctx) error {
 			log.Println("Invalid end_date format. Use YYYY-MM-DD.")
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid end_date format. Use YYYY-MM-DD.",
+				Error:   "Format end_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		endOfDay := time.Date(parsedEndDate.Year(), parsedEndDate.Month(), parsedEndDate.Day(), 23, 59, 59, 0, parsedEndDate.Location())
@@ -844,7 +844,7 @@ func (ac *AttendanceController) GetAttendances(c fiber.Ctx) error {
 		log.Println("Failed to retrieve attendances:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve attendances",
+			Error:   "Gagal mengambil data kehadiran",
 		})
 	}
 
@@ -911,14 +911,14 @@ func (ac *AttendanceController) GetAttendanceByID(c fiber.Ctx) error {
 		log.Println("Attendance record not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Attendance record not found",
+			Error:   "Data kehadiran tidak ditemukan",
 		})
 	}
 
 	log.Println("Attendance record retrieved successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Attendance record retrieved successfully",
+		Message: "Data kehadiran berhasil diambil",
 		Data:    attendance.ToResponse(),
 	})
 }

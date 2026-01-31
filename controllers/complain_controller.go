@@ -82,7 +82,7 @@ func (cc *ComplainController) GetComplains(c fiber.Ctx) error {
 			log.Println("Invalid start_date format:", err)
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid start_date format. Use YYYY-MM-DD.",
+				Error:   "Format start_date valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		startOfDay := time.Date(parsedStartDate.Year(), parsedStartDate.Month(), parsedStartDate.Day(), 0, 0, 0, 0, parsedStartDate.Location())
@@ -95,7 +95,7 @@ func (cc *ComplainController) GetComplains(c fiber.Ctx) error {
 			log.Println("Invalid end_date format:", err)
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid end_date format. Use YYYY-MM-DD.",
+				Error:   "Format end_date tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		endOfDay := time.Date(parsedEndDate.Year(), parsedEndDate.Month(), parsedEndDate.Day(), 23, 59, 59, 0, parsedEndDate.Location())
@@ -117,7 +117,7 @@ func (cc *ComplainController) GetComplains(c fiber.Ctx) error {
 		log.Println("Error retrieving complains:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve complains",
+			Error:   "Gagal mengambil data complain",
 		})
 	}
 
@@ -186,14 +186,14 @@ func (cc *ComplainController) GetComplain(c fiber.Ctx) error {
 		log.Println("Complain with id " + id + " not found.")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Complain with id " + id + " not found.",
+			Error:   "Complain dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("Complain retrieved successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Complain retrieved successfully",
+		Message: "Data complain berhasil diambil",
 		Data:    complain.ToComplainResponse(),
 	})
 }
@@ -220,7 +220,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 		log.Println("Invalid user ID:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 	log.Printf("Current user ID: %d\n", userID)
@@ -234,7 +234,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 		log.Printf("Failed to parse request body: %v\n", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -244,7 +244,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 		log.Println("Complain with tracking number " + req.TrackingNumber + " already exists.")
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Complain with tracking number " + req.TrackingNumber + " already exists.",
+			Error:   "Complain dengan nomor pelacakan " + req.TrackingNumber + " sudah terdaftar.",
 		})
 	}
 	log.Println("Tracking number check passed - no duplicate found")
@@ -259,7 +259,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 		log.Printf("Failed to start transaction: %v\n", tx.Error)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to start transaction",
+			Error:   "Gagal memulai transaksi",
 		})
 	}
 	log.Println("Transaction started successfully")
@@ -278,7 +278,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with tracking number " + req.TrackingNumber + " not found.",
+			Error:   "Pesanan dengan nomor pelacakan " + req.TrackingNumber + " tidak ditemukan.",
 		})
 	}
 	log.Printf("Order found: ID=%d, OrderGineeID=%s, %d details\n", order.ID, order.OrderGineeID, len(order.OrderDetails))
@@ -300,7 +300,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create complain",
+			Error:   "Gagal membuat complain",
 		})
 	}
 	log.Printf("Complain created successfully with ID: %d\n", complain.ID)
@@ -320,7 +320,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to create complain product details",
+				Error:   "Gagal membuat detail produk complain",
 			})
 		}
 		log.Printf("Product detail %d created: SKU=%s, Qty=%d\n", i, orderDetail.SKU, orderDetail.Quantity)
@@ -339,7 +339,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to update QC Ribbon complained status",
+				Error:   "Gagal memperbarui status QC Ribbon complain",
 			})
 		}
 	}
@@ -353,7 +353,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to update QC Online complained status",
+				Error:   "Gagal memperbarui status QC online complain",
 			})
 		}
 	}
@@ -367,7 +367,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to update Outbound complained status",
+				Error:   "Gagal memperbarui status Outbound complain",
 			})
 		}
 	}
@@ -386,7 +386,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to update Order complained status",
+				Error:   "Gagal memperbarui status complain pesanan",
 			})
 		}
 	}
@@ -405,7 +405,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to create complain user details",
+				Error:   "Gagal membuat detail pengguna complain",
 			})
 		}
 		log.Printf("User detail created for userID=%d\n", userIDValue)
@@ -418,7 +418,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 		log.Printf("Transaction commit failed: %v\n", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to commit transaction",
+			Error:   "Gagal melakukan commit transaksi",
 		})
 	}
 	log.Println("Transaction committed successfully!")
@@ -429,7 +429,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 		log.Printf("Failed to retrieve created complain: %v\n", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve created complain",
+			Error:   "Gagal mengambil keluhan yang dibuat",
 		})
 	}
 	log.Println("Complain loaded successfully")
@@ -439,7 +439,7 @@ func (cc *ComplainController) CreateComplain(c fiber.Ctx) error {
 	log.Println("CreateComplain completed successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Complain created successfully",
+		Message: "Complain berhasil dibuat",
 		Data:    complain.ToComplainResponse(),
 	})
 }
@@ -468,7 +468,7 @@ func (cc *ComplainController) UpdateComplain(c fiber.Ctx) error {
 		log.Println("UpdateComplain - Complain not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Complain with id " + id + " not found.",
+			Error:   "Complain dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -478,7 +478,7 @@ func (cc *ComplainController) UpdateComplain(c fiber.Ctx) error {
 		log.Println("UpdateComplain - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -500,7 +500,7 @@ func (cc *ComplainController) UpdateComplain(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update complain",
+			Error:   "Gagal memperbarui complain",
 		})
 	}
 	log.Println("UpdateComplain - Complain updated successfully")
@@ -514,7 +514,7 @@ func (cc *ComplainController) UpdateComplain(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to clear existing complain user details",
+				Error:   "Gagal menghapus detail pengguna complain yang ada",
 			})
 		}
 		log.Println("UpdateComplain - Existing user details cleared")
@@ -532,7 +532,7 @@ func (cc *ComplainController) UpdateComplain(c fiber.Ctx) error {
 				tx.Rollback()
 				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 					Success: false,
-					Error:   "Failed to create complain user details",
+					Error:   "Gagal membuat detail pengguna complain",
 				})
 			}
 		}
@@ -544,7 +544,7 @@ func (cc *ComplainController) UpdateComplain(c fiber.Ctx) error {
 		log.Println("UpdateComplain - Failed to commit transaction:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to commit transaction",
+			Error:   "Gagal melakukan commit transaksi",
 		})
 	}
 	log.Println("UpdateComplain - Transaction committed successfully")
@@ -554,7 +554,7 @@ func (cc *ComplainController) UpdateComplain(c fiber.Ctx) error {
 		log.Println("UpdateComplain - Failed to retrieve updated complain:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve updated complain",
+			Error:   "Gagal mengambil complain yang diperbarui",
 		})
 	}
 
@@ -569,7 +569,7 @@ func (cc *ComplainController) UpdateComplain(c fiber.Ctx) error {
 	log.Println("UpdateComplain completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Complain updated successfully",
+		Message: "Complain berhasil diperbarui",
 		Data:    complain.ToComplainResponse(),
 	})
 }
@@ -599,7 +599,7 @@ func (cc *ComplainController) UpdateComplainCheck(c fiber.Ctx) error {
 		log.Println("UpdateComplainCheck - Complain not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Complain with id " + id + " not found.",
+			Error:   "Complain dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -609,7 +609,7 @@ func (cc *ComplainController) UpdateComplainCheck(c fiber.Ctx) error {
 		log.Println("UpdateComplainCheck - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -619,7 +619,7 @@ func (cc *ComplainController) UpdateComplainCheck(c fiber.Ctx) error {
 		log.Println("UpdateComplainCheck - Failed to update checked status:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update complain checked status",
+			Error:   "Gagal memperbarui status pemeriksaan complain",
 		})
 	}
 	log.Println("UpdateComplainCheck - Checked status updated successfully")
@@ -629,14 +629,14 @@ func (cc *ComplainController) UpdateComplainCheck(c fiber.Ctx) error {
 		log.Println("UpdateComplainCheck - Failed to retrieve updated complain:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve updated complain",
+			Error:   "Gagal mengambil complain yang diperbarui",
 		})
 	}
 
 	log.Println("UpdateComplainCheck completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Complain checked status updated successfully",
+		Message: "Status pemeriksaan complain berhasil diperbarui",
 		Data:    complain.ToComplainResponse(),
 	})
 }

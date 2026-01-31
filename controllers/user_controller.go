@@ -101,7 +101,7 @@ func (uc *UserController) GetUsers(c fiber.Ctx) error {
 		log.Println("GetUsers - Failed to retrieve users:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve users",
+			Error:   "Gagal mengambil data pengguna",
 		})
 	}
 
@@ -160,14 +160,14 @@ func (uc *UserController) GetUser(c fiber.Ctx) error {
 		log.Println("GetUser - User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User with id " + id + " not found.",
+			Error:   "Pengguna dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
 	log.Println("GetUser completed successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User retrieved successfully",
+		Message: "Data pengguna berhasil diambil",
 		Data:    user.ToResponse(),
 	})
 }
@@ -194,7 +194,7 @@ func (uc *UserController) CreateUser(c fiber.Ctx) error {
 		log.Println("CreateUser - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi data permintaan tidak valid",
 		})
 	}
 
@@ -203,7 +203,7 @@ func (uc *UserController) CreateUser(c fiber.Ctx) error {
 	if err := uc.DB.Preload("Roles").Where("username = ?", req.Username).Or("email = ?", req.Email).First(&existingUser).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Username or email already exists",
+			Error:   "Username atau email sudah terdaftar",
 		})
 	}
 
@@ -212,7 +212,7 @@ func (uc *UserController) CreateUser(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to hash password",
+			Error:   "Gagal mengenkripsi kata sandi",
 		})
 	}
 
@@ -238,7 +238,7 @@ func (uc *UserController) CreateUser(c fiber.Ctx) error {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create user",
+			Error:   "Gagal menambahkan data pengguna",
 		})
 	}
 
@@ -249,7 +249,7 @@ func (uc *UserController) CreateUser(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid role name",
+				Error:   "Nama role tidak valid",
 			})
 		}
 
@@ -270,7 +270,7 @@ func (uc *UserController) CreateUser(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Insufficient permissions",
+				Error:   "Tidak punya hak akses",
 			})
 		}
 
@@ -284,7 +284,7 @@ func (uc *UserController) CreateUser(c fiber.Ctx) error {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to assign role to user",
+				Error:   "Gagal memberikan role pada pengguna",
 			})
 		}
 	}
@@ -293,7 +293,7 @@ func (uc *UserController) CreateUser(c fiber.Ctx) error {
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to create user",
+			Error:   "Gagal menambahkan pengguna",
 		})
 	}
 
@@ -302,14 +302,14 @@ func (uc *UserController) CreateUser(c fiber.Ctx) error {
 		log.Println("CreateUser - Failed to load user:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load user",
+			Error:   "Gagal memuat data pengguna",
 		})
 	}
 
 	log.Println("CreateUser completed successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User created successfully",
+		Message: "Pengguna berhasil dibuat",
 		Data:    newUser.ToResponse(),
 	})
 }
@@ -338,7 +338,7 @@ func (uc *UserController) UpdateUser(c fiber.Ctx) error {
 		log.Println("UpdateUser - User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User with id " + id + " not found.",
+			Error:   "Pengguna dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -347,7 +347,7 @@ func (uc *UserController) UpdateUser(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan tidak valid",
 		})
 	}
 
@@ -357,7 +357,7 @@ func (uc *UserController) UpdateUser(c fiber.Ctx) error {
 		if !utils.HasPermission(c, []string{"developer", "superadmin", "hrd"}) {
 			return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Insufficient permissions to update other user's profile",
+				Error:   "Tidak memiliki hak akses untuk memperbarui profil pengguna lain",
 			})
 		}
 	}
@@ -370,7 +370,7 @@ func (uc *UserController) UpdateUser(c fiber.Ctx) error {
 		if err := uc.DB.Where("email = ? AND id != ?", req.Email, id).First(&existingUser).Error; err == nil {
 			return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Email already in use",
+				Error:   "Email sudah digunakan",
 			})
 		}
 		user.Email = req.Email
@@ -380,7 +380,7 @@ func (uc *UserController) UpdateUser(c fiber.Ctx) error {
 		if !utils.HasPermission(c, []string{"developer", "superadmin", "hrd"}) {
 			return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Insufficient permissions to update user status",
+				Error:   "Pengguna tidak mempunyai hak akses",
 			})
 		}
 		user.IsActive = *req.IsActive
@@ -390,7 +390,7 @@ func (uc *UserController) UpdateUser(c fiber.Ctx) error {
 		log.Println("UpdateUser - Failed to update user:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update user",
+			Error:   "Gagal memperbarui data pengguna",
 		})
 	}
 
@@ -400,14 +400,14 @@ func (uc *UserController) UpdateUser(c fiber.Ctx) error {
 		log.Println("UpdateUser - Failed to load user:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load user",
+			Error:   "Gagal memuat data pengguna",
 		})
 	}
 
 	log.Println("UpdateUser completed successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User updated successfully",
+		Message: "Pengguna berhasil diperbarui",
 		Data:    reloadedUser.ToResponse(),
 	})
 }
@@ -436,7 +436,7 @@ func (uc *UserController) UpdatePassword(c fiber.Ctx) error {
 		log.Println("UpdatePassword - User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User with id " + id + " not found.",
+			Error:   "Pengguna dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -445,7 +445,7 @@ func (uc *UserController) UpdatePassword(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi data permintaan tidak valid",
 		})
 	}
 
@@ -455,7 +455,7 @@ func (uc *UserController) UpdatePassword(c fiber.Ctx) error {
 		if !utils.HasPermission(c, []string{"developer", "superadmin", "hrd"}) {
 			return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Insufficient permissions to update other user's password",
+				Error:   "Tidak memiliki hak akses untuk mengubah password pengguna lain",
 			})
 		}
 	}
@@ -464,7 +464,7 @@ func (uc *UserController) UpdatePassword(c fiber.Ctx) error {
 	if req.NewPassword != req.ConfirmNewPassword {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "New password and confirm password do not match",
+			Error:   "Password baru dan konfirmasi password tidak sama",
 		})
 	}
 
@@ -473,7 +473,7 @@ func (uc *UserController) UpdatePassword(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to hash password",
+			Error:   "Gagal mengenkripsi password",
 		})
 	}
 
@@ -482,7 +482,7 @@ func (uc *UserController) UpdatePassword(c fiber.Ctx) error {
 		log.Println("UpdatePassword - Failed to update password:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update password",
+			Error:   "Gagal memperbarui password",
 		})
 	}
 
@@ -492,7 +492,7 @@ func (uc *UserController) UpdatePassword(c fiber.Ctx) error {
 	log.Println("UpdatePassword completed successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Password updated successfully",
+		Message: "Berhasil memperbarui password",
 	})
 }
 
@@ -519,7 +519,7 @@ func (uc *UserController) DeleteUser(c fiber.Ctx) error {
 		log.Println("DeleteUser - User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User with id " + id + " not found.",
+			Error:   "Pengguna dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -531,14 +531,14 @@ func (uc *UserController) DeleteUser(c fiber.Ctx) error {
 		log.Println("DeleteUser - Failed to delete user:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to delete user",
+			Error:   "Gagal menghapus pengguna",
 		})
 	}
 
 	log.Println("DeleteUser completed successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User deleted successfully",
+		Message: "Pengguna berhasil dihapus",
 	})
 }
 
@@ -566,7 +566,7 @@ func (uc *UserController) AssignRole(c fiber.Ctx) error {
 		log.Println("AssignRole - User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User with id " + id + " not found.",
+			Error:   "User dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -575,7 +575,7 @@ func (uc *UserController) AssignRole(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi data permintaan tidak valid",
 		})
 	}
 
@@ -584,7 +584,7 @@ func (uc *UserController) AssignRole(c fiber.Ctx) error {
 	if err := uc.DB.Where("role_name = ?", req.RoleName).First(&role).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid role name",
+			Error:   "Nama role tidak valid",
 		})
 	}
 
@@ -593,7 +593,7 @@ func (uc *UserController) AssignRole(c fiber.Ctx) error {
 	if err := uc.DB.Where("user_id = ? AND role_id = ?", user.ID, role.ID).First(&userRole).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User already has this role",
+			Error:   "Pengguna sudah memiliki role tersebut",
 		})
 	}
 
@@ -613,7 +613,7 @@ func (uc *UserController) AssignRole(c fiber.Ctx) error {
 	if role.Hierarchy < currUserMinHierarchy {
 		return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Insufficient permissions",
+			Error:   "Izin tidak mencukupi",
 		})
 	}
 
@@ -627,7 +627,7 @@ func (uc *UserController) AssignRole(c fiber.Ctx) error {
 		log.Println("AssignRole - Failed to assign role to user:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to assign role to user",
+			Error:   "Gagal memberikan role ke pengguna",
 		})
 	}
 
@@ -637,14 +637,14 @@ func (uc *UserController) AssignRole(c fiber.Ctx) error {
 		log.Println("AssignRole - Failed to load user:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load user",
+			Error:   "Gagal memuat data pengguna",
 		})
 	}
 
 	log.Println("AssignRole completed successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Role assigned to user successfully",
+		Message: "Role berhasil diberikan ke pengguna",
 		Data:    reloadedUser.ToResponse(),
 	})
 }
@@ -673,7 +673,7 @@ func (uc *UserController) RemoveRole(c fiber.Ctx) error {
 		log.Println("RemoveRole - User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User with id " + id + " not found.",
+			Error:   "Pengguna dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -682,7 +682,7 @@ func (uc *UserController) RemoveRole(c fiber.Ctx) error {
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi permintaan data tidak valid",
 		})
 	}
 
@@ -691,7 +691,7 @@ func (uc *UserController) RemoveRole(c fiber.Ctx) error {
 	if err := uc.DB.Where("role_name = ?", req.RoleName).First(&role).Error; err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid role name",
+			Error:   "Nama role tidak valid",
 		})
 	}
 
@@ -700,7 +700,7 @@ func (uc *UserController) RemoveRole(c fiber.Ctx) error {
 	if err := uc.DB.Where("user_id = ? AND role_id = ?", user.ID, role.ID).First(&userRole).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User does not have this role",
+			Error:   "Pengguna tidak memiliki role tersebut",
 		})
 	}
 
@@ -720,7 +720,7 @@ func (uc *UserController) RemoveRole(c fiber.Ctx) error {
 	if role.Hierarchy < currUserMinHierarchy {
 		return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Insufficient permissions",
+			Error:   "Izin tidak mencukupi",
 		})
 	}
 
@@ -729,7 +729,7 @@ func (uc *UserController) RemoveRole(c fiber.Ctx) error {
 		log.Println("RemoveRole - Failed to remove role from user:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to remove role from user",
+			Error:   "Gagal menghapus role dari pengguna",
 		})
 	}
 
@@ -739,14 +739,14 @@ func (uc *UserController) RemoveRole(c fiber.Ctx) error {
 		log.Println("RemoveRole - Failed to load user:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to load user",
+			Error:   "Gagal memuat data pengguna",
 		})
 	}
 
 	log.Println("RemoveRole completed successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Role removed from user successfully",
+		Message: "Role berhasil dihapus dari pengguna",
 		Data:    reloadedUser.ToResponse(),
 	})
 }
@@ -774,7 +774,7 @@ func (uc *UserController) GetSessions(c fiber.Ctx) error {
 		log.Println("GetSessions - User not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User with id " + id + " not found.",
+			Error:   "Pengguna dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -784,7 +784,7 @@ func (uc *UserController) GetSessions(c fiber.Ctx) error {
 		if !utils.HasPermission(c, []string{"developer", "superadmin", "hrd"}) {
 			return c.Status(fiber.StatusForbidden).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Insufficient permissions to view other user's sessions",
+				Error:   "Tidak memiliki hak akses untuk melihat session pengguna lain",
 			})
 		}
 	}
@@ -794,7 +794,7 @@ func (uc *UserController) GetSessions(c fiber.Ctx) error {
 		log.Println("GetSessions - Failed to retrieve user sessions:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve user sessions",
+			Error:   "Gagal mengambil data sesi dari pengguna",
 		})
 	}
 
@@ -807,7 +807,7 @@ func (uc *UserController) GetSessions(c fiber.Ctx) error {
 	log.Println("GetSessions completed successfully")
 	return c.JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User sessions retrieved successfully",
+		Message: "Data sesi pengguna berhasil diambil",
 		Data:    sessionList,
 	})
 }
@@ -836,7 +836,7 @@ func (uc *UserController) RegisterUserFace(c fiber.Ctx) error {
 		log.Println("RegisterUserFace - Invalid user ID:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid user ID",
+			Error:   "ID pengguna tidak valid",
 		})
 	}
 
@@ -845,7 +845,7 @@ func (uc *UserController) RegisterUserFace(c fiber.Ctx) error {
 	if err := uc.DB.Where("id = ?", userID).First(&user).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "User with id " + id + " not found.",
+			Error:   "Pengguna dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -854,7 +854,7 @@ func (uc *UserController) RegisterUserFace(c fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Image file is required",
+			Error:   "File gambar wajib diunggah",
 		})
 	}
 
@@ -862,7 +862,7 @@ func (uc *UserController) RegisterUserFace(c fiber.Ctx) error {
 	if !strings.HasPrefix(file.Header.Get("Content-Type"), "image/") {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid image file type",
+			Error:   "Tipe gambar tidak valid",
 		})
 	}
 
@@ -871,7 +871,7 @@ func (uc *UserController) RegisterUserFace(c fiber.Ctx) error {
 	if err := c.SaveFile(file, tmpPath); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to save image file",
+			Error:   "Gagal menyimpan file gambar",
 		})
 	}
 	defer os.Remove(tmpPath)
@@ -880,7 +880,7 @@ func (uc *UserController) RegisterUserFace(c fiber.Ctx) error {
 	if err := utils.SendToDeepFaceRegister(uint(userID), tmpPath); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("Failed to register face with deepface service: %v", err),
+			Error:   fmt.Sprintf("Gagal mendaftarkan wajah ke layanan Deepface: %v", err),
 		})
 	}
 
@@ -895,7 +895,7 @@ func (uc *UserController) RegisterUserFace(c fiber.Ctx) error {
 			log.Println("RegisterUserFace - Failed to register user face:", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to register user face",
+				Error:   "Gagal mendaftarkan wajah pengguna",
 			})
 		}
 	} else {
@@ -904,7 +904,7 @@ func (uc *UserController) RegisterUserFace(c fiber.Ctx) error {
 			log.Println("RegisterUserFace - Failed to update user face:", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to update user face",
+				Error:   "Gagal memperbarui data wajah pengguna",
 			})
 		}
 	}
@@ -912,7 +912,7 @@ func (uc *UserController) RegisterUserFace(c fiber.Ctx) error {
 	log.Println("RegisterUserFace completed successfully")
 	return c.Status(fiber.StatusCreated).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "User face registered successfully",
+		Message: "Wajah pengguna berhasil ditambahkan",
 		Data:    userFace,
 	})
 }

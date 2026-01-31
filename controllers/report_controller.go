@@ -260,7 +260,7 @@ func (rc *ReportController) GetBoxReports(c fiber.Ctx) error {
 		log.Println("GetBoxReports - Failed to retrieve box reports:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve box reports",
+			Error:   "Gagal mengambil laporan box",
 		})
 	}
 
@@ -349,7 +349,7 @@ func (rc *ReportController) GetOutboundReports(c fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid date format. Use YYYY-MM-DD.",
+				Error:   "Format tanggal tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		// Filter for the entire day (from 00:00:00 to 23:59:59)
@@ -372,7 +372,7 @@ func (rc *ReportController) GetOutboundReports(c fiber.Ctx) error {
 		log.Println("GetOutboundReports - Failed to retrieve outbound reports:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve outbound reports",
+			Error:   "Gagal mengambil laporan outbound",
 		})
 	}
 
@@ -444,7 +444,7 @@ func (rc *ReportController) GetReturnReports(c fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid date format. Use YYYY-MM-DD.",
+				Error:   "Format tanggal tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 		// Filter for the entire day (from 00:00:00 to 23:59:59)
@@ -472,7 +472,7 @@ func (rc *ReportController) GetReturnReports(c fiber.Ctx) error {
 		log.Println("GetReturnReports - Failed to retrieve return reports:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve return reports",
+			Error:   "Gagal mengambil laporan retur",
 		})
 	}
 
@@ -542,7 +542,7 @@ func (rc *ReportController) GetComplainReports(c fiber.Ctx) error {
 		if parsedDate, err := time.Parse("2006-01-02", date); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid date format. Use YYYY-MM-DD.",
+				Error:   "Format tanggal tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		} else {
 			// Filter for the entire day (from 00:00:00 to 23:59:59)
@@ -561,7 +561,7 @@ func (rc *ReportController) GetComplainReports(c fiber.Ctx) error {
 		log.Println("GetComplainReports - Failed to retrieve complaint reports:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve complaint reports",
+			Error:   "Gagal mengambil laporan complain",
 		})
 	}
 
@@ -630,7 +630,7 @@ func (rc *ReportController) GetUserFeeReports(c fiber.Ctx) error {
 		if _, err := time.Parse("2006-01-02", startDate); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid startDate format. Use YYYY-MM-DD.",
+				Error:   "Format startDate tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 	}
@@ -638,7 +638,7 @@ func (rc *ReportController) GetUserFeeReports(c fiber.Ctx) error {
 		if _, err := time.Parse("2006-01-02", endDate); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Invalid endDate format. Use YYYY-MM-DD.",
+				Error:   "Format endDate tidak valid. Gunakan YYYY-MM-DD.",
 			})
 		}
 	}
@@ -681,7 +681,7 @@ func (rc *ReportController) GetUserFeeReports(c fiber.Ctx) error {
 		log.Println("GetUserFeeReports - Failed to count user fee reports:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to count user fee reports",
+			Error:   "Gagal menghitung laporan biaya pengguna",
 		})
 	}
 
@@ -691,7 +691,7 @@ func (rc *ReportController) GetUserFeeReports(c fiber.Ctx) error {
 		log.Println("GetUserFeeReports - Failed to retrieve user fee reports:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to retrieve user fee reports",
+			Error:   "Gagal mengambil laporan biaya pengguna",
 		})
 	}
 
@@ -729,7 +729,7 @@ func (rc *ReportController) GetUserFeeReports(c fiber.Ctx) error {
 			log.Println("GetUserFeeReports - Failed to retrieve complain details:", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 				Success: false,
-				Error:   "Failed to retrieve complain details",
+				Error:   "Gagal mengambil detail complain",
 			})
 		}
 
