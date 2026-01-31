@@ -736,7 +736,6 @@ func (moc *MobileOrderController) GetMobilePickedOrder(c fiber.Ctx) error {
 }
 
 // UpdatePickedOrder update IsPicked status of an order detail verified by sku and quantity of detail order
-//
 // @Summary Update Picked Order Detail
 // @Description Update IsPicked status of an order detail verified by sku
 // @Tags Mobile Orders
@@ -758,7 +757,7 @@ func (moc *MobileOrderController) UpdatePickedOrder(c fiber.Ctx) error {
 		log.Println("UpdatePickedOrder - Order not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order with id " + id + " not found.",
+			Error:   "Pesanan dengan id " + id + " tidak ditemukan.",
 		})
 	}
 
@@ -768,7 +767,7 @@ func (moc *MobileOrderController) UpdatePickedOrder(c fiber.Ctx) error {
 		log.Println("UpdatePickedOrder - Invalid request body:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Invalid request body",
+			Error:   "Isi data permintaan tidak valid",
 		})
 	}
 
@@ -786,7 +785,7 @@ func (moc *MobileOrderController) UpdatePickedOrder(c fiber.Ctx) error {
 		log.Println("UpdatePickedOrder - SKU not found in order")
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "SKU '" + req.SKU + "' not found in this order",
+			Error:   "SKU '" + req.SKU + "' Data tidak ditemukan dalam pesanan ini",
 		})
 	}
 
@@ -794,7 +793,7 @@ func (moc *MobileOrderController) UpdatePickedOrder(c fiber.Ctx) error {
 		log.Printf("UpdatePickedOrder - Quantity mismatch for SKU %s (expected: %d, received: %d)", req.SKU, order.OrderDetails[matchedIndex].Quantity, req.Quantity)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   fmt.Sprintf("Quantity mismatch for SKU '%s' (expected: %d, received: %d)", req.SKU, order.OrderDetails[matchedIndex].Quantity, req.Quantity),
+			Error:   fmt.Sprintf("Jumlah tidak sesuai untuk SKU '%s' (seharusnya: %d, diterima: %d)", req.SKU, order.OrderDetails[matchedIndex].Quantity, req.Quantity),
 		})
 	}
 
@@ -802,7 +801,7 @@ func (moc *MobileOrderController) UpdatePickedOrder(c fiber.Ctx) error {
 		log.Printf("UpdatePickedOrder - Order detail already picked (SKU: %s, IsPicked: %v)", req.SKU, order.OrderDetails[matchedIndex].IsPicked)
 		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Order detail with SKU '" + req.SKU + "' has already been picked",
+			Error:   "Detail pesanan dengan SKU '" + req.SKU + "' sudah di proses",
 		})
 	}
 
@@ -811,7 +810,7 @@ func (moc *MobileOrderController) UpdatePickedOrder(c fiber.Ctx) error {
 		log.Println("UpdatePickedOrder - Failed to update order detail:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to update order detail",
+			Error:   "Gagal memperbarui detail pesanan",
 		})
 	}
 
@@ -820,14 +819,14 @@ func (moc *MobileOrderController) UpdatePickedOrder(c fiber.Ctx) error {
 		log.Println("UpdatePickedOrder - Failed to reload order:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Failed to reload order",
+			Error:   "Gagal memuat ulang data pesanan",
 		})
 	}
 
 	log.Println("UpdatePickedOrder completed successfully")
 	return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
 		Success: true,
-		Message: "Picked order updated successfully",
+		Message: "Pesanan yang di-pick berhasil diperbarui",
 		Data:    order.ToOrderResponse(),
 	})
 }
