@@ -48,13 +48,14 @@ func (mrc *MobileReturnController) GetMobileReturns(c fiber.Ctx) error {
 
 	var mobileReturns []models.Return
 
-	// Set date range: 7 days ago to current date
-	endDate := time.Now()
-	startDate := endDate.AddDate(0, 0, -7)
+	// Set date range: 7 days ago to current date (end of day)
+	now := time.Now()
+	endDate := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 999999999, now.Location())
+	startDate := endDate.AddDate(0, 0, -7).Truncate(24 * time.Hour)
 
 	// Format dates for query
-	startDateFormatted := startDate.Format("2006-01-02")
-	endDateFormatted := endDate.Format("2006-01-02")
+	startDateFormatted := startDate.Format("2006-01-02 15:04:05")
+	endDateFormatted := endDate.Format("2006-01-02 15:04:05")
 
 	// Build base query
 	query := mrc.DB.Model(&models.Return{}).Preload("Channel").Preload("Store").Preload("CreateUser").Where("created_at >= ? AND created_at <= ?", startDateFormatted, endDateFormatted)

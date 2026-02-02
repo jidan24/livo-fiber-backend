@@ -191,7 +191,7 @@ func (moc *MobileOrderController) GetMyPickingOrder(c fiber.Ctx) error {
 // @Failure 401 {object} utils.ErrorResponse
 // @Failure 404 {object} utils.ErrorResponse
 // @Failure 500 {object} utils.ErrorResponse
-// @Router /api/mobile-orders/my-picking-order/{id}/complete [put]
+// @Router /api/mobile-orders/my-picking-orders/{id}/complete [put]
 func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 	log.Println("CompletePickingOrder called")
 	// Get current logged in user from context
@@ -208,7 +208,7 @@ func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 	// Parse id parameter
 	id := c.Params("id")
 	var order models.Order
-	if err := moc.DB.Where("id = ?", id).Where("picked_by = ?", userID).First(&order).Error; err != nil {
+	if err := moc.DB.Preload("OrderDetails").Where("id = ?", id).Where("picked_by = ?", userID).First(&order).Error; err != nil {
 		log.Println("CompletePickingOrder - Order not found:", err)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
@@ -314,7 +314,7 @@ func (moc *MobileOrderController) CompletePickingOrder(c fiber.Ctx) error {
 // @Failure 401 {object} utils.ErrorResponse
 // @Failure 404 {object} utils.ErrorResponse
 // @Failure 500 {object} utils.ErrorResponse
-// @Router /api/mobile-orders/my-picking-order/{id}/pending [put]
+// @Router /api/mobile-orders/my-picking-orders/{id}/pending [put]
 func (moc *MobileOrderController) PendingPickOrder(c fiber.Ctx) error {
 	log.Println("PendingPickOrder called")
 	//Param id parameter

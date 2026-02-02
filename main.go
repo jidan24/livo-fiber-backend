@@ -33,7 +33,7 @@ import (
 // @license.name MIT
 // @license.url https://opensource.org/licenses/MIT
 
-// @host 192.168.31.148:8083
+// @host 192.168.31.147:8040
 // @BasePath /
 // @schemes http https
 
