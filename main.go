@@ -35,7 +35,7 @@ import (
 
 // @host 192.168.31.147:8040
 // @BasePath /
-// @schemes http https
+// @schemes http
 
 // matchOriginPattern checks if an origin matches a pattern with wildcards
 func matchOriginPattern(pattern, origin string) bool {
@@ -151,15 +151,18 @@ func main() {
 	routes.SetupRoutes(app, cfg, database.DB)
 
 	// Start server
-	log.Println("════════════════════════════════════════════════════════════")
-	log.Printf("✓ Server ready on port %s", cfg.Port)
-	log.Printf("📊 Health check: %s/api/health", cfg.AppUrl)
-	log.Printf("📚 API documentation: %s/rapidoc", cfg.AppUrl)
-	log.Println("════════════════════════════════════════════════════════════")
-
-	// port := fmt.Sprintf(":%s", cfg.Port)
-	// log.Printf("Server starting on port %s", port)
-	if err := app.Listen(":" + cfg.Port); err != nil {
+	port := ":" + cfg.Port
+	log.Printf("Server starting on port %s", port)
+	
+	// For HTTPS in production, use:
+	// if err := app.Listen(port, fiber.ListenConfig{
+	// 	CertFile:    "./cert.pem",
+	// 	CertKeyFile: "./key.pem",
+	// }); err != nil {
+	// 	log.Fatalf("❌ Failed to start server: %v", err)
+	// }
+	
+	if err := app.Listen(port); err != nil {
 		log.Fatalf("❌ Failed to start server: %v", err)
 	}
 }

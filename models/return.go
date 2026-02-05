@@ -138,8 +138,8 @@ func (r *Return) ToResponse() ReturnResponse {
 		ReturnReason:      r.ReturnReason,
 		ReturnNumber:      r.ReturnNumber,
 		ScrapNumber:       r.ScrapNumber,
-		CreatedAt:         r.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:         r.UpdatedAt.Format("2006-01-02 15:04:05"),
+		CreatedAt:         r.CreatedAt.Format("02-01-2006 15:04:05"),
+		UpdatedAt:         r.UpdatedAt.Format("02-01-2006 15:04:05"),
 		Details:           &details,
 		Order:             orderResponse,
 	}
