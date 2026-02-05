@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"livo-fiber-backend/config"
 	"livo-fiber-backend/controllers"
 	"livo-fiber-backend/middleware"
@@ -65,6 +66,14 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, db *gorm.DB) {
 
 	// Swagger UI HTML page
 	app.Get("/docs", func(c fiber.Ctx) error {
+		// Dynamic URLs based on the request
+		scheme := "http"
+		if c.Protocol() == "https" {
+			scheme = "https"
+		}
+		host := c.Request().Host()
+		url := fmt.Sprintf("%s://%s", scheme, host)
+
 		html := `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,7 +89,7 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, db *gorm.DB) {
 <script>
   window.onload = () => {
     window.ui = SwaggerUIBundle({
-      url: '/docs/swagger.json',
+      url: "` + url + `/docs/swagger.yaml",
       dom_id: '#swagger-ui',
     });
   };
@@ -93,6 +102,15 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, db *gorm.DB) {
 
 	// RapiDoc HTML page
 	app.Get("/rapidoc", func(c fiber.Ctx) error {
+		// Dynamic URLs based on the request
+		scheme := "http"
+		if c.Protocol() == "https" {
+			scheme = "https"
+		}
+		host := c.Request().Host()
+		baseURL := fmt.Sprintf("%s://%s", scheme, host)
+		specURL := fmt.Sprintf("%s/docs/swagger.yaml", baseURL)
+
 		html := `<!doctype html>
 <html>
 <head>
@@ -103,7 +121,7 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, db *gorm.DB) {
 </head>
 <body>
   <rapi-doc
-        spec-url="/docs/swagger.yaml"
+        spec-url="` + specURL + `"
         theme="dark"
         bg-color="#1a1a1a"
         text-color="#f0f0f0"
@@ -125,9 +143,7 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, db *gorm.DB) {
         show-method-in-nav-bar="as-colored-block"
         use-path-in-nav-bar="true"
         response-area-height="400px"
-        api-key-name="Authorization"
-        api-key-location="header"
-        api-key-value="Bearer "
+				default-api-server="` + baseURL + `"
         default-schema-tab="model"
         schema-expand-level="2"
         schema-description-expanded="true"

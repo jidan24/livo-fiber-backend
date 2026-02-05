@@ -33,9 +33,11 @@ import (
 // @license.name MIT
 // @license.url https://opensource.org/licenses/MIT
 
-// @host 192.168.31.147:8040
 // @BasePath /
-// @schemes http
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and Paseto v4 token.
 
 // matchOriginPattern checks if an origin matches a pattern with wildcards
 func matchOriginPattern(pattern, origin string) bool {
@@ -153,7 +155,7 @@ func main() {
 	// Start server
 	port := ":" + cfg.Port
 	log.Printf("Server starting on port %s", port)
-	
+
 	// For HTTPS in production, use:
 	// if err := app.Listen(port, fiber.ListenConfig{
 	// 	CertFile:    "./cert.pem",
@@ -161,7 +163,7 @@ func main() {
 	// }); err != nil {
 	// 	log.Fatalf("❌ Failed to start server: %v", err)
 	// }
-	
+
 	if err := app.Listen(port); err != nil {
 		log.Fatalf("❌ Failed to start server: %v", err)
 	}
