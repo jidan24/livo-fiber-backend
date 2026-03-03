@@ -95,7 +95,7 @@ func (qcrc *QCRibbonController) GetQCRibbons(c fiber.Ctx) error {
 	endOfDay := startOfDay.Add(24 * time.Hour)
 
 	// Build base query
-	query := qcrc.DB.Model(&models.QCRibbon{}).Preload("QCRibbonDetails.Box").Preload("QCUser").Order("created_at DESC").Where("qc_by = ?", uint(userID)).Where("created_at >= ? AND created_at < ?", startOfDay, endOfDay)
+	query := qcrc.DB.Model(&models.QCRibbon{}).Preload("QCRibbonDetails.Box").Preload("QCUser").Order("updated_at DESC").Where("qc_by = ?", uint(userID)).Where("created_at >= ? AND created_at < ?", startOfDay, endOfDay)
 
 	// Search condition if provided
 	search := strings.TrimSpace(c.Query("search", ""))
