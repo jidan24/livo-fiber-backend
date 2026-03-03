@@ -296,23 +296,88 @@ func (qcrc *QCRibbonController) QCRibbonStart(c fiber.Ctx) error {
 	// Convert tracking number to uppercase and trim spaces
 	req.TrackingNumber = strings.ToUpper(strings.TrimSpace(req.TrackingNumber))
 
-	// Duplicate check in QCRibbon
+	// Check for existing QCRibbon record
 	var existingQCRibbon models.QCRibbon
-	if err := qcrc.DB.Where("tracking_number = ?", req.TrackingNumber).First(&existingQCRibbon).Error; err == nil {
-		log.Println("QCRibbonStart - Tracking number already in QC Ribbon records:", req.TrackingNumber)
-		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
+	err = qcrc.DB.Where("tracking_number = ?", req.TrackingNumber).First(&existingQCRibbon).Error
+	if err == nil {
+		// Record exists
+		if existingQCRibbon.Status == "pending" {
+			// If status is pending, update it to in_progress
+			tx := qcrc.DB.Begin()
+			defer func() {
+				if r := recover(); r != nil {
+					tx.Rollback()
+				}
+			}()
+
+			existingQCRibbon.Status = "in_progress"
+			if err := tx.Save(&existingQCRibbon).Error; err != nil {
+				tx.Rollback()
+				log.Println("QCRibbonStart - Failed to update QC Ribbon status:", err)
+				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+					Success: false,
+					Error:   "Gagal memperbarui status QC Ribbon",
+				})
+			}
+
+			// Update order processing status to qc_progress
+			if err := tx.Model(&models.Order{}).Where("tracking_number = ?", req.TrackingNumber).Update("processing_status", "qc_progress").Error; err != nil {
+				tx.Rollback()
+				log.Println("QCRibbonStart - Failed to update order processing status:", err)
+				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+					Success: false,
+					Error:   "Gagal memperbarui status pemrosesan pesanan",
+				})
+			}
+
+			if err := tx.Commit().Error; err != nil {
+				log.Println("QCRibbonStart - Failed to commit transaction:", err)
+				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+					Success: false,
+					Error:   "Gagal memperbarui proses QC Ribbon",
+				})
+			}
+
+			// Reload with relationships
+			if err := qcrc.DB.Preload("QCRibbonDetails.Box").Preload("QCUser").Where("id = ?", existingQCRibbon.ID).First(&existingQCRibbon).Error; err != nil {
+				log.Println("QCRibbonStart - Failed to reload QC Ribbon record:", err)
+				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+					Success: false,
+					Error:   "Gagal mengambil data QC Ribbon",
+				})
+			}
+
+			log.Println("QCRibbonStart completed successfully (resumed from pending)")
+			return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
+				Success: true,
+				Message: "Proses QC Ribbon berhasil dilanjutkan dari pending",
+				Data:    existingQCRibbon.ToResponse(),
+			})
+		} else if existingQCRibbon.Status != "completed" {
+			// If status is not completed and not pending, return error
+			log.Println("QCRibbonStart - Tracking number already in QC Ribbon records:", req.TrackingNumber)
+			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
+				Success: false,
+				Error:   "Nomor pelacakan " + req.TrackingNumber + " sudah berada dalam proses QC Ribbon.",
+			})
+		}
+		// If status is completed, we'll continue to create a new record
+	} else if err != gorm.ErrRecordNotFound {
+		// Database error
+		log.Println("QCRibbonStart - Database error:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Nomor pelacak " + req.TrackingNumber + " sudah ada dalam data QC Ribbon.",
+			Error:   "Gagal memeriksa data QC Ribbon",
 		})
 	}
 
-	// Check if tracking number exists in orders and have processing status "picking_completed"
+	// Check if tracking number exists in orders and have processing status "picking_completed or qc_pending"
 	var order models.Order
-	if err := qcrc.DB.Where("tracking_number = ? AND processing_status = ?", req.TrackingNumber, "picking_completed").First(&order).Error; err != nil {
+	if err := qcrc.DB.Where("tracking_number = ? AND processing_status IN ?", req.TrackingNumber, []string{"picking_completed", "qc_pending"}).First(&order).Error; err != nil {
 		log.Println("QCRibbonStart - No order found with tracking number in picking completed status:", req.TrackingNumber)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Tidak ditemukan pesanan dengan nomor pelacak " + req.TrackingNumber + " dalam status picking completed.",
+			Error:   "Tidak ditemukan pesanan dengan nomor pelacakan " + req.TrackingNumber + " dalam status picking completed.",
 		})
 	}
 
@@ -357,6 +422,15 @@ func (qcrc *QCRibbonController) QCRibbonStart(c fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
 			Error:   "Gagal memulai proses QC Ribbon",
+		})
+	}
+
+	// Reload the created record with all relationships for response
+	if err := qcrc.DB.Preload("QCRibbonDetails.Box").Preload("QCUser").Where("id = ?", qcRibbon.ID).First(&qcRibbon).Error; err != nil {
+		log.Println("QCRibbonStart - Failed to reload QC Ribbon record:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   "Gagal mengambil data QC Ribbon yang dimulai",
 		})
 	}
 
@@ -705,6 +779,15 @@ func (qcrc *QCRibbonController) PendingQCRibbon(c fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
 			Error:   "Gagal menandai QC Ribbon sebagai pending",
+		})
+	}
+
+	// Update order processing status to "qc_pending"
+	if err := qcrc.DB.Model(&models.Order{}).Where("tracking_number = ?", qcRibbon.TrackingNumber).Update("processing_status", "qc_pending").Error; err != nil {
+		log.Println("PendingQCRibbon - Failed to update order processing status:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   "Gagal memperbarui status pemrosesan pesanan",
 		})
 	}
 

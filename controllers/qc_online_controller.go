@@ -296,19 +296,84 @@ func (qcoc *QCOnlineController) QCOnlineStart(c fiber.Ctx) error {
 	// Convert tracking number to uppercase and trim spaces
 	req.TrackingNumber = strings.ToUpper(strings.TrimSpace(req.TrackingNumber))
 
-	// Duplicate check in QCOnline
+	// Check for existing QCOnline record
 	var existingQCOnline models.QCOnline
-	if err := qcoc.DB.Where("tracking_number = ?", req.TrackingNumber).First(&existingQCOnline).Error; err == nil {
-		log.Println("QCOnlineStart - Tracking number already in QC Online records:", req.TrackingNumber)
-		return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
+	err = qcoc.DB.Where("tracking_number = ?", req.TrackingNumber).First(&existingQCOnline).Error
+	if err == nil {
+		// Record exists
+		if existingQCOnline.Status == "pending" {
+			// If status is pending, update it to in_progress
+			tx := qcoc.DB.Begin()
+			defer func() {
+				if r := recover(); r != nil {
+					tx.Rollback()
+				}
+			}()
+
+			existingQCOnline.Status = "in_progress"
+			if err := tx.Save(&existingQCOnline).Error; err != nil {
+				tx.Rollback()
+				log.Println("QCOnlineStart - Failed to update QC Online status:", err)
+				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+					Success: false,
+					Error:   "Gagal memperbarui status QC Online",
+				})
+			}
+
+			// Update order processing status to qc_progress
+			if err := tx.Model(&models.Order{}).Where("tracking_number = ?", req.TrackingNumber).Update("processing_status", "qc_progress").Error; err != nil {
+				tx.Rollback()
+				log.Println("QCOnlineStart - Failed to update order processing status:", err)
+				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+					Success: false,
+					Error:   "Gagal memperbarui status pemrosesan pesanan",
+				})
+			}
+
+			if err := tx.Commit().Error; err != nil {
+				log.Println("QCOnlineStart - Failed to commit transaction:", err)
+				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+					Success: false,
+					Error:   "Gagal memperbarui proses QC Online",
+				})
+			}
+
+			// Reload with relationships
+			if err := qcoc.DB.Preload("QCOnlineDetails.Box").Preload("QCUser").Where("id = ?", existingQCOnline.ID).First(&existingQCOnline).Error; err != nil {
+				log.Println("QCOnlineStart - Failed to reload QC Online record:", err)
+				return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+					Success: false,
+					Error:   "Gagal mengambil data QC Online",
+				})
+			}
+
+			log.Println("QCOnlineStart completed successfully (resumed from pending)")
+			return c.Status(fiber.StatusOK).JSON(utils.SuccessResponse{
+				Success: true,
+				Message: "Proses QC Online berhasil dilanjutkan dari pending",
+				Data:    existingQCOnline.ToResponse(),
+			})
+		} else if existingQCOnline.Status != "completed" {
+			// If status is not completed and not pending, return error
+			log.Println("QCOnlineStart - Tracking number already in QC Online records:", req.TrackingNumber)
+			return c.Status(fiber.StatusBadRequest).JSON(utils.ErrorResponse{
+				Success: false,
+				Error:   "Nomor pelacakan " + req.TrackingNumber + " sudah berada dalam proses QC Online.",
+			})
+		}
+		// If status is completed, we'll continue to create a new record
+	} else if err != gorm.ErrRecordNotFound {
+		// Database error
+		log.Println("QCOnlineStart - Database error:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
-			Error:   "Nomor pelacakan " + req.TrackingNumber + " sudah berada dalam proses QC Online.",
+			Error:   "Gagal memeriksa data QC Online",
 		})
 	}
 
-	// Check if tracking number exists in orders and have processing status "picking_completed"
+	// Check if tracking number exists in orders and have processing status "picking_completed or qc_pending"
 	var order models.Order
-	if err := qcoc.DB.Where("tracking_number = ? AND processing_status = ?", req.TrackingNumber, "picking_completed").First(&order).Error; err != nil {
+	if err := qcoc.DB.Where("tracking_number = ? AND processing_status IN ?", req.TrackingNumber, []string{"picking_completed", "qc_pending"}).First(&order).Error; err != nil {
 		log.Println("QCOnlineStart - No order found with tracking number in picking completed status:", req.TrackingNumber)
 		return c.Status(fiber.StatusNotFound).JSON(utils.ErrorResponse{
 			Success: false,
@@ -357,6 +422,15 @@ func (qcoc *QCOnlineController) QCOnlineStart(c fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
 			Error:   "Gagal memulai proses QC Online",
+		})
+	}
+
+	// Reload the created record with all relationships for response
+	if err := qcoc.DB.Preload("QCOnlineDetails.Box").Preload("QCUser").Where("id = ?", qcOnline.ID).First(&qcOnline).Error; err != nil {
+		log.Println("QCOnlineStart - Failed to reload QC Online record:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   "Gagal mengambil data QC Online yang dimulai",
 		})
 	}
 
@@ -704,6 +778,15 @@ func (qcoc *QCOnlineController) PendingQCOnline(c fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
 			Success: false,
 			Error:   "Gagal menandai QC Online sebagai pending",
+		})
+	}
+
+	// Update order processing status to "qc_pending"
+	if err := qcoc.DB.Model(&models.Order{}).Where("tracking_number = ?", qcOnline.TrackingNumber).Update("processing_status", "qc_pending").Error; err != nil {
+		log.Println("PendingQCOnline - Failed to update order processing status:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
+			Success: false,
+			Error:   "Gagal memperbarui status pemrosesan pesanan",
 		})
 	}
 
