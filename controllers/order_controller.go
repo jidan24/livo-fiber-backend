@@ -655,6 +655,7 @@ func (oc *OrderController) UpdateOrder(c fiber.Ctx) error {
 		newDetails := make([]models.OrderDetail, 0, len(req.Details))
 		for _, detailReq := range req.Details {
 			detail := models.OrderDetail{
+				OrderID:     order.ID,
 				SKU:         detailReq.SKU,
 				ProductName: detailReq.ProductName,
 				Variant:     detailReq.Variant,
