@@ -95,7 +95,7 @@ func (qcoc *QCOnlineController) GetQCOnlines(c fiber.Ctx) error {
 	endOfDay := startOfDay.Add(24 * time.Hour)
 
 	// Build base query
-	query := qcoc.DB.Model(&models.QCOnline{}).Preload("QCOnlineDetails.Box").Preload("QCUser").Order("updated_at DESC").Where("qc_by = ?", uint(userID)).Where("created_at >= ? AND created_at < ?", startOfDay, endOfDay)
+	query := qcoc.DB.Model(&models.QCOnline{}).Preload("QCOnlineDetails.Box").Preload("QCUser").Order("updated_at DESC").Where("qc_by = ?", uint(userID)).Where("updated_at >= ? AND updated_at < ?", startOfDay, endOfDay)
 
 	// Search condition if provided
 	search := strings.TrimSpace(c.Query("search", ""))
