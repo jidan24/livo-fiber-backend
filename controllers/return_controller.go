@@ -50,7 +50,7 @@ type UpdateReturnRequest struct {
 // @Security BearerAuth
 // @Param page query int false "Page number" default(1)
 // @Param limit query int false "Number of returns per page" default(10)
-// @Param search query string false "Search term for new tracking number, order ginee ID, or old tracking number"
+// @Param search query string false "Search term for new tracking number, order ginee ID, tracking number"
 // @Success 200 {object} utils.SuccessPaginatedResponse{data=[]models.ReturnResponse}
 // @Failure 400 {object} utils.ErrorResponse
 // @Failure 401 {object} utils.ErrorResponse
@@ -99,7 +99,7 @@ func (rc *ReturnController) GetReturns(c fiber.Ctx) error {
 	// Search condition if provided
 	search := c.Query("search", "")
 	if search != "" {
-		query = query.Where("new_tracking_number ILIKE ? OR order_ginee_id ILIKE ? OR old_tracking_number ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+		query = query.Where("new_tracking_number ILIKE ? OR order_ginee_id ILIKE ? OR tracking_number ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%")
 	}
 
 	// Get total count for pagination

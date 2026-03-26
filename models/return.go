@@ -11,7 +11,7 @@ type Return struct {
 	CreatedBy      uint      `gorm:"not null" json:"created_by"`
 	UpdatedBy      *uint     `gorm:"default:null" json:"updated_by"`
 	OrderGineeID   *string   `gorm:"default:null;type:varchar(255)" json:"order_ginee_id"`
-	TrackingNumber *string   `gorm:"default:null;index;type:varchar(255)" json:"old_tracking_number"`
+	TrackingNumber *string   `gorm:"default:null;index;type:varchar(255)" json:"tracking_number"`
 	ReturnType     *string   `gorm:"default:null;type:varchar(100)" json:"return_type"`
 	ReturnReason   *string   `gorm:"default:null;type:text" json:"return_reason"`
 	ReturnNumber   *string   `gorm:"default:null;type:varchar(20)" json:"return_number"`
@@ -47,7 +47,7 @@ type ReturnResponse struct {
 	Store             string                  `json:"store"`
 	CreatedBy         string                  `json:"createdBy"`
 	UpdatedBy         *string                 `json:"updatedBy,omitempty"`
-	TrackingNumber    *string                 `json:"oldTrackingNumber,omitempty"`
+	TrackingNumber    *string                 `json:"trackingNumber,omitempty"`
 	ReturnType        *string                 `json:"returnType,omitempty"`
 	ReturnReason      *string                 `json:"returnReason,omitempty"`
 	ReturnNumber      *string                 `json:"returnNumber,omitempty"`
