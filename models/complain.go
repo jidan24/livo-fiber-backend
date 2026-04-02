@@ -73,6 +73,7 @@ type ComplainProductDetailResponse struct {
 }
 
 type ComplainUserDetailResponse struct {
+	ID        uint   `json:"id"`
 	User      string `json:"user"`
 	FeeCharge int    `json:"feeCharge"`
 }
@@ -105,6 +106,7 @@ func (c *Complain) ToComplainResponse() *ComplainResponse {
 		}
 
 		userDetailResponse := ComplainUserDetailResponse{
+			ID:        userDetail.ID,
 			User:      userName,
 			FeeCharge: userDetail.FeeCharge,
 		}
