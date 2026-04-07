@@ -340,7 +340,7 @@ func (rc *ReportController) GetOutboundReports(c fiber.Ctx) error {
 
 	// Build base query
 	var outbounds []models.Outbound
-	query := rc.DB.Model(&models.Outbound{}).Order("created_at DESC")
+	query := rc.DB.Model(&models.Outbound{}).Preload("OutboundUser").Order("created_at DESC")
 
 	// Apply date filters
 	if date != "" {
