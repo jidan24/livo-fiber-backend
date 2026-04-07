@@ -542,3 +542,5 @@ For issues, questions, or support:
 ---
 
 **Happy Coding! 🚀**
+
+https://discord.gg/xzHzq2cY
