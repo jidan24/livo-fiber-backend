@@ -455,7 +455,7 @@ func (qcoc *QCOnlineController) QCOnlineStart(c fiber.Ctx) error {
 // @Failure 400 {object} utils.ErrorResponse
 // @Failure 401 {object} utils.ErrorResponse
 // @Failure 500 {object} utils.ErrorResponse
-// @Router /api/onlines/qc-onlines/{id}/validate [post]
+// @Router /api/onlines/qc-onlines/{id}/validate [put]
 func (qcoc *QCOnlineController) ValidateQCOnlineProduct(c fiber.Ctx) error {
 	log.Println("ValidateQCOnlineProduct called")
 	// Parse id parameter
