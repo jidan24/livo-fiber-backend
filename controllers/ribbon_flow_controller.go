@@ -108,7 +108,7 @@ func (rfc *RibbonFlowController) BuildRibbonFlow(trackingNumber string) RibbonFl
 
 	// 3. Query Order table
 	var order models.Order
-	if err := rfc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").Preload("DuplicateUser").Where("tracking_number = ?", trackingNumber).First(&order).Error; err == nil {
+	if err := rfc.DB.Preload("OrderDetails").Preload("AssignUser").Preload("PickUser").Preload("PendingUser").Preload("ChangeUser").Preload("DuplicateUser").Preload("CancelUser").Where("tracking_number = ?", trackingNumber).First(&order).Error; err == nil {
 		orderInfo := &RibbonOrderFlowInfo{
 			TrackingNumber:   order.TrackingNumber,
 			ProcessingStatus: order.ProcessingStatus,
@@ -246,7 +246,7 @@ func (rfc *RibbonFlowController) GetRibbonFlows(c fiber.Ctx) error {
 	var qcRibbons []models.QCRibbon
 
 	// Build base query
-	query := rfc.DB.Preload("QCRibbonDetails").Preload("QCUser").Model(&models.QCRibbon{}).Order("created_at DESC")
+	query := rfc.DB.Model(&models.QCRibbon{}).Preload("QCRibbonDetails").Preload("QCUser").Order("created_at DESC")
 
 	// Date range filter if provided
 	startDate := c.Query("startDate", "")
@@ -281,12 +281,13 @@ func (rfc *RibbonFlowController) GetRibbonFlows(c fiber.Ctx) error {
 	// Search condition if provided
 	search := c.Query("search", "")
 	if search != "" {
-		query = query.Where("tracking_number LIKE ?", "%"+search+"%")
+		query = query.Where("tracking_number ILIKE ?", "%"+search+"%")
 	}
 
 	// Get total count for pagination
 	var total int64
-	query.Count(&total)
+	query.Session(&gorm.Session{}).Count(&total)
+	log.Println("Total items found: ", total)
 
 	// Retrieve paginated results
 	if err := query.Offset(offset).Limit(limit).Find(&qcRibbons).Error; err != nil {
