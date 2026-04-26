@@ -102,10 +102,9 @@ func (cc *ComplainController) GetComplains(c fiber.Ctx) error {
 		query = query.Where("created_at <= ?", endOfDay)
 	}
 
-	// Search condition if provided
 	search := strings.TrimSpace(c.Query("search", ""))
 	if search != "" {
-		query = query.Where("tracking_number LIKE ? OR order_ginee_id LIKE ?", "%"+search+"%", "%"+search+"%")
+		query = query.Where("tracking_number ILIKE ? OR order_ginee_id ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 
 	// Get total count for pagination
