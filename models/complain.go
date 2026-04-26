@@ -58,6 +58,7 @@ type ComplainResponse struct {
 	CreatedBy      string                          `json:"createdBy"`
 	Solution       *string                         `json:"solution,omitempty"`
 	TotalFee       *int                            `json:"totalFee,omitempty"`
+	OrderGineeID   string                          `json:"orderGineeId"`
 	Checked        bool                            `json:"checked"`
 	CreatedAt      string                          `json:"createdAt"`
 	UpdatedAt      string                          `json:"updatedAt"`
@@ -135,6 +136,7 @@ func (c *Complain) ToComplainResponse() *ComplainResponse {
 		ID:             c.ID,
 		Code:           c.Code,
 		TrackingNumber: c.TrackingNumber,
+		OrderGineeID:   c.OrderGineeID,
 		Channel:        channelName,
 		Store:          storeName,
 		Reason:         c.Reason,
