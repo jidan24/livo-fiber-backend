@@ -142,12 +142,14 @@ func (ofc *OnlineFlowController) BuildOnlineFlow(trackingNumber string) OnlineFl
 			orderInfo.EventStatus = "In Progress"
 		case "completed":
 			orderInfo.EventStatus = "Completed"
-		case "cancelled":
-			orderInfo.EventStatus = "Cancelled"
+		case "canceled", "cancelled":
+			orderInfo.EventStatus = "Canceled"
 		case "pending":
 			orderInfo.EventStatus = "Pending"
 		case "duplicated":
 			orderInfo.EventStatus = "Duplicated"
+		default:
+			orderInfo.EventStatus = order.EventStatus
 		}
 
 		// user visual handlers
