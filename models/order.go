@@ -188,10 +188,14 @@ func (o *Order) ToOrderResponse() *OrderResponse {
 		processingStatus = "Picking Completed"
 	case "qc_progress":
 		processingStatus = "QC in Progress"
+	case "qc_pending":
+		processingStatus = "QC is Pending"
 	case "qc_completed":
 		processingStatus = "QC Completed"
 	case "outbound_completed":
 		processingStatus = "Outbound Completed"
+	default:
+		processingStatus = o.ProcessingStatus
 	}
 
 	// Event status visual handler
@@ -203,8 +207,12 @@ func (o *Order) ToOrderResponse() *OrderResponse {
 		eventStatus = "Completed"
 	case "pending":
 		eventStatus = "Pending"
-	case "canceled":
+	case "canceled", "cancelled":
 		eventStatus = "Canceled"
+	case "duplicated":
+		eventStatus = "Duplicated"
+	default:
+		eventStatus = o.EventStatus
 	}
 
 	return &OrderResponse{
