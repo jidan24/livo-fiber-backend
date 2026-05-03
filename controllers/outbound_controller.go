@@ -46,8 +46,8 @@ type OutboundsDailyCount struct {
 type OutboundsDailyCountResponse struct {
 	Month       string                `json:"month"`
 	Year        int                   `json:"year"`
-	DailyCounts []OutboundsDailyCount `json:"daily_counts"`
-	TotalCount  int                   `json:"total_count"`
+	DailyCounts []OutboundsDailyCount `json:"dailyCounts"`
+	TotalCount  int                   `json:"totalCount"`
 }
 
 // GetOutbounds retrieves a list of outbounds with pagination and search
@@ -449,7 +449,7 @@ func (oc *OutboundController) GetChartOutbounds(c fiber.Ctx) error {
 	startOfNextMonth := startOfMonth.AddDate(0, 1, 0)
 
 	// Query to get daily counts for current month
-	var dailyCounts []OutboundsDailyCount
+	dailyCounts := []OutboundsDailyCount{}
 
 	if err := oc.DB.Model(&models.Outbound{}).Select("DATE(created_at) as date, COUNT(*) as count").Where("created_at >= ? AND created_at < ?", startOfMonth, startOfNextMonth).Group("DATE(created_at)").Order("date ASC").Scan(&dailyCounts).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{

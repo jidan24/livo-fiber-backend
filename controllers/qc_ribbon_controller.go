@@ -220,7 +220,7 @@ func (qcrc *QCRibbonController) GetChartQCRibbons(c fiber.Ctx) error {
 	startOfNextMonth := startOfMonth.AddDate(0, 1, 0)
 
 	// Query to get daily counts for current month
-	var dailyCounts []QcRibbonDailyCount
+	dailyCounts := []QcRibbonDailyCount{}
 
 	if err := qcrc.DB.Model(&models.QCRibbon{}).Select("DATE(created_at) as date, COUNT(*) as count").Where("created_at >= ? AND created_at < ?", startOfMonth, startOfNextMonth).Group("DATE(created_at)").Order("date ASC").Scan(&dailyCounts).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.ErrorResponse{
