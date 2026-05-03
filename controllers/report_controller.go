@@ -734,7 +734,7 @@ func (rc *ReportController) GetUserFeeReports(c fiber.Ctx) error {
 		}
 
 		// Format the dates
-		var details []ComplainDetailInReport
+		details := []ComplainDetailInReport{}
 		for _, raw := range rawDetails {
 			details = append(details, ComplainDetailInReport{
 				ComplainID:        raw.ComplainID,

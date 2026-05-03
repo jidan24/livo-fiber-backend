@@ -433,8 +433,8 @@ func (oc *OrderController) BulkCreateOrders(c fiber.Ctx) error {
 	}
 
 	var createdOrders []models.Order
-	var skippedOrders []SkippedOrder
-	var failedOrders []FailedOrder
+	skippedOrders := []SkippedOrder{}
+	failedOrders := []FailedOrder{}
 
 	for i, orderReq := range req.Orders {
 		// Convert Order Ginee ID to uppercase and trim spaces
