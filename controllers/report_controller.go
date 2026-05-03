@@ -84,7 +84,7 @@ type UserFeeReportsWithDetailsListResponse struct {
 // BuildBoxUsageDetails retrieves detailed usage for a specific box
 func (rc *ReportController) BuildBoxUsageDetails(boxID uint, startDate, endDate string) []BoxUsageDetail {
 	log.Println("BuildBoxUsageDetails called")
-	var details []BoxUsageDetail
+	details := []BoxUsageDetail{}
 
 	// Query from QCRibbonDetail with joins
 	type RibbonResult struct {
@@ -265,7 +265,7 @@ func (rc *ReportController) GetBoxReports(c fiber.Ctx) error {
 	}
 
 	// Build response with details
-	var reports []BoxCountReport
+	reports := []BoxCountReport{}
 	for _, result := range results {
 		report := BoxCountReport{
 			BoxID:       result.BoxID,
@@ -696,7 +696,7 @@ func (rc *ReportController) GetUserFeeReports(c fiber.Ctx) error {
 	}
 
 	// Build detailed reports for each user
-	var reports []UserFeeReportWithDetails
+	reports := []UserFeeReportWithDetails{}
 	for _, summary := range summaries {
 		// Get detailed complain information for this user
 		detailQuery := rc.DB.Table("complain_user_details").

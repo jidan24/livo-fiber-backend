@@ -301,7 +301,7 @@ func (rfc *RibbonFlowController) GetRibbonFlows(c fiber.Ctx) error {
 	}
 
 	// Format response
-	var ribbonFlows []RibbonFlowResponse
+	ribbonFlows := []RibbonFlowResponse{}
 	for _, qcRibbon := range qcRibbons {
 		flow := rfc.BuildRibbonFlow(qcRibbon.TrackingNumber)
 		ribbonFlows = append(ribbonFlows, flow)

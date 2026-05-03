@@ -302,7 +302,7 @@ func (ofc *OnlineFlowController) GetOnlineFlows(c fiber.Ctx) error {
 	}
 
 	// Format response
-	var onlineFlows []OnlineFlowResponse
+	onlineFlows := []OnlineFlowResponse{}
 	for _, qcOnline := range qcOnlines {
 		flow := ofc.BuildOnlineFlow(qcOnline.TrackingNumber)
 		onlineFlows = append(onlineFlows, flow)
