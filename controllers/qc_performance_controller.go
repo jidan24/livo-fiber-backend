@@ -49,7 +49,7 @@ func (qc *QCPerformanceController) GetQCPerformances(c fiber.Ctx) error {
 	var performances []models.QCPerformance
 
 	// Build base query with eager loading
-	query := qc.DB.Model(&models.QCPerformance{}).Preload("User").Preload("Details").Order("login_time DESC")
+	query := qc.DB.Model(&models.QCPerformance{}).Preload("User").Preload("Details").Where("qc_performances.total_qc > ?", 0).Order("login_time DESC")
 
 	var filters []string
 
