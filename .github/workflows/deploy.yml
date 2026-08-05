@@ -1,0 +1,24 @@
+name: Deploy to Homelab
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Pull latest code
+        run: |
+          cd /home/jidan/development/livotech/livo-fiber-backend
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Build Go binary
+        run: |
+          cd /home/jidan/development/livotech/livo-fiber-backend
+          go build -o livo-backend main.go
+
+      - name: Restart service
+        run: |
+          sudo systemctl restart myapp.service
